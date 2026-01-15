@@ -1,55 +1,121 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title></title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M-Pesa Send</title>
 <style>
-body { font-family: Arial, sans-serif; background: #f3f3f3; }
-.container { max-width: 450px; background: #fff; margin:50px auto; padding:20px; border-radius:6px; box-shadow:0 0 10px rgba(0,0,0,.1);}
-h2 { text-align: center; }
-label { display: block; margin-top:10px; font-weight:bold; }
-input, button { width:100%; padding:8px; margin-top:5px; display:none; }
-input.active, button.active { display:block; }
-button { background:#2e7d32; color:white; border:none; cursor:pointer; }
-button:hover { background:#1b5e20; }
-pre { background:#eee; padding:10px; white-space: pre-wrap; margin-top:10px; }
+* { box-sizing: border-box; }
+body { 
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #0f0f0f 100%); 
+  margin: 0; padding: 20px; min-height: 100vh; 
+  color: #e0e0e0;
+}
+.container { 
+  max-width: 500px; width: 100%; background: #2a2a2a; 
+  margin: 0 auto; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+  overflow: hidden; border: 1px solid #404040;
+}
+.content { padding: 30px 25px; }
+h2 { text-align: center; color: #ffffff; margin: 0 0 30px; font-size: 24px; font-weight: 600; }
+label { 
+  display: block; margin: 20px 0 8px; font-weight: 600; color: #cccccc; font-size: 16px;
+}
+input, button { 
+  width: 100%; padding: 16px 20px; margin-bottom: 10px; border-radius: 12px; 
+  font-size: 18px; transition: all 0.3s ease; display: none;
+  background: #3a3a3a; color: #ffffff; border: 2px solid #505050;
+}
+input.active, button.active { display: block; }
+input::placeholder { color: #888; }
+input:focus { 
+  outline: none; border-color: #00b0ff; box-shadow: 0 0 0 3px rgba(0,176,255,0.2);
+  background: #404040;
+}
+button { 
+  background: #000000; color: #ffffff; 
+  border: 2px solid #333; cursor: pointer; font-weight: 600; font-size: 18px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+}
+button:hover:not(:disabled), button:active:not(:disabled) { 
+  background: #1a1a1a; transform: translateY(-2px); 
+  box-shadow: 0 6px 20px rgba(0,0,0,0.8); border-color: #555;
+}
+button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-.radio-group { display:none; margin-top:10px; }
-.radio-group label { display:inline-block; margin-right:10px; cursor:pointer; padding:8px 15px; border:1px solid #2e7d32; border-radius:4px; background:#fff; transition:0.2s; }
-.radio-group input { display:none; }
-.radio-group label.selected { background:#2e7d32; color:white; }
+.radio-group { 
+  display: none; margin: 20px 0; padding: 20px; 
+  background: #363636; border-radius: 12px; border: 1px solid #404040;
+}
+.radio-group.active { display: block; }
+.radio-group label { 
+  display: block; margin: 10px 0; padding: 16px 20px; 
+  border: 2px solid #505050; border-radius: 12px; 
+  background: #3a3a3a; color: #e0e0e0; cursor: pointer; transition: all 0.3s ease;
+  font-size: 16px; font-weight: 500;
+}
+.radio-group input { display: none; }
+.radio-group label.selected, .radio-group label:hover { 
+  background: #000000; color: #ffffff; border-color: #00b0ff;
+}
+
+pre { 
+  background: #1e1e1e; padding: 20px; border-radius: 12px; margin-top: 20px; 
+  white-space: pre-wrap; font-family: 'Courier New', monospace; 
+  font-size: 14px; line-height: 1.5; color: #00ff88;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.3); border: 1px solid #333;
+}
+
+@media (max-width: 480px) {
+  body { padding: 15px; }
+  .content { padding: 25px 20px; }
+  input, button { padding: 18px 16px; font-size: 17px; }
+  h2 { font-size: 22px; }
+}
+
+@media (max-height: 600px) {
+  .content { padding: 20px 20px; }
+  label { margin: 15px 0 6px; }
+}
 </style>
 </head>
 <body>
 <div class="container">
+  <div class="content">
+    <h2>Send Money</h2>
 
-<!-- Step 1: Phone -->
-<label id="phoneLabel"></label>
-<input type="text" id="phone" placeholder="Enter number" class="active">
-<button id="phoneOkBtn" class="active">OK</button>
+    <!-- Step 1: Phone -->
+    <label id="phoneLabel"></label>
+    <input type="tel" id="phone" placeholder="Enter number" class="active">
+    <button id="phoneOkBtn" class="active">ok</button>
 
-<!-- Step 2: Amount -->
-<label id="amountLabel"></label>
-<input type="number" id="amount" placeholder="Amount">
-<button id="amountOkBtn">Next</button>
+    <!-- Step 2: Amount -->
+    <label id="amountLabel"></label>
+    <input type="number" id="amount" placeholder="Enter amount" inputmode="numeric">
+    <button id="amountOkBtn">Ok</button>
 
-<!-- Step 3: Name -->
-<label id="nameLabel"></label>
-<input type="text" id="name" placeholder="Enter name">
-<button id="nameOkBtn">Next</button>
+    <!-- Step 3: Name -->
+    <label id="nameLabel"></label>
+    <input type="text" id="name" placeholder="Enter name">
+    <button id="nameOkBtn">OK</button>
 
-<!-- Step 4: Pochi/Till ONLY -->
-<div class="radio-group" id="phoneOptionContainer">
-  <label></label><br>
-  <label id="pochiLabel" class="selected"><input type="radio" name="includePhone" value="pochi" checked> </label>
-</div>
+    <!-- Step 4: Pochi/Till -->
+    <div class="radio-group" id="phoneOptionContainer">
+      <label id="pochiLabel" class="selected">
+        <input type="radio" name="includePhone" value="pochi" checked> 
+        Till Number
+      </label>
+    </div>
 
-<!-- Step 5: Send button -->
-<button id="sendBtn">Send</button>
+    <!-- Step 5: Send button -->
+    <button id="sendBtn">Send Money</button>
 
-<h3></h3>
-<pre id="output"></pre>
+    <h3></h3>
+    <pre id="output"></pre>
+  </div>
 </div>
 
 <script>
@@ -67,11 +133,10 @@ const nameOkBtn = document.getElementById("nameOkBtn");
 const sendBtn = document.getElementById("sendBtn");
 const output = document.getElementById("output");
 const phoneOptionContainer = document.getElementById("phoneOptionContainer");
+const pochiLabel = document.getElementById("pochiLabel");
 
 /* ================= HELPERS ================= */
-function calculateCost(amount) {
-  return 0;
-}
+function calculateCost(amount) { return 0; }
 
 function generateUAToken() {
   const chars="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -94,21 +159,29 @@ function hidePreviousStep(input, label, okBtn) {
   okBtn.classList.remove("active");
 }
 
+/* ================= RADIO BUTTON HANDLER ================= */
+pochiLabel.addEventListener("click", () => {
+  pochiLabel.classList.add("selected");
+});
+
 /* ================= STEP 1: PHONE ================= */
 phoneOkBtn.addEventListener("click", async ()=>{
   const phone = phoneInput.value.trim();
-  if(!phone) return alert("Enter number");
+  if(!phone || phone.length < 10) return alert("Enter valid phone number");
 
-  const res = await fetch(`${API}/lookup/${phone}`);
-  const data = await res.json();
+  try {
+    const res = await fetch(`${API}/lookup/${phone}`);
+    const data = await res.json();
 
-  if(data.found){
-    nameInput.value = data.name;
-  } else {
-    nameInput.value = "";
+    if(data.found){
+      nameInput.value = data.name;
+    } else {
+      nameInput.value = "";
+    }
+  } catch(e) {
+    console.error("Lookup failed:", e);
   }
 
-  // Hide phone step, show amount step
   hidePreviousStep(phoneInput, phoneLabel, phoneOkBtn);
   amountInput.classList.add("active");
   amountLabel.style.display = "block";
@@ -118,9 +191,8 @@ phoneOkBtn.addEventListener("click", async ()=>{
 /* ================= STEP 2: AMOUNT ================= */
 amountOkBtn.addEventListener("click", ()=>{
   const amount = parseFloat(amountInput.value);
-  if(!amount || amount <= 0) return alert("Enter valid amount");
+  if(!amount || amount <= 0 || amount > 50000) return alert("Enter valid amount (1-50,000)");
 
-  // Hide amount step, show name step
   hidePreviousStep(amountInput, amountLabel, amountOkBtn);
   nameInput.classList.add("active");
   nameLabel.style.display = "block";
@@ -129,11 +201,10 @@ amountOkBtn.addEventListener("click", ()=>{
 
 /* ================= STEP 3: NAME ================= */
 nameOkBtn.addEventListener("click", ()=>{
-  if(nameInput.value.trim()==="") return alert("Enter name");
+  if(!nameInput.value.trim()) return alert("Enter recipient name");
   
-  // Hide name step, show final step
   hidePreviousStep(nameInput, nameLabel, nameOkBtn);
-  phoneOptionContainer.style.display="block";
+  phoneOptionContainer.classList.add("active");
   sendBtn.classList.add("active");
 });
 
@@ -142,28 +213,37 @@ sendBtn.addEventListener("click", async ()=>{
   const phone = phoneInput.value.trim();
   const amount = parseFloat(amountInput.value);
   const name = nameInput.value.trim();
-  if(!phone || !amount || amount <=0) return alert("Phone and valid amount required");
-  if(!name) return alert("Enter name");
+  
+  if(!phone || !amount || amount <=0) return alert("Complete all fields");
+  if(!name) return alert("Enter recipient name");
 
-  const cost = calculateCost(amount);
-  const token = generateUAToken();
-  const balance = randomBalance();
-  const datetime = formatDateTime();
+  sendBtn.disabled = true;
+  sendBtn.textContent = "Sending...";
 
-  const message = `${token} Confirmed. Ksh${amount.toFixed(2)} sent to ${name} on ${datetime}. New Mpesa balance is Ksh${balance}. Transaction cost, Ksh${cost.toFixed(2)}. Amount you can transact within the day is 499,960.00.Sign up for Lipa Na M-PESA Till online https://m-pesaforbusiness.co.ke `;
+  try {
+    const cost = calculateCost(amount);
+    const token = generateUAToken();
+    const balance = randomBalance();
+    const datetime = formatDateTime();
 
-  const payload = { phone, name, amount, cost, message, token };
-  const res = await fetch(`${API}/send`, {
-    method: "POST",
-    headers: {"Content-Type":"application/json"},
-    body: JSON.stringify(payload)
-  });
-  const data = await res.json();
-  if(data.error) return alert(data.error);
-  output.textContent = message;
+    const message = `${token} Confirmed. Ksh${amount.toFixed(2)} sent to ${name} on ${datetime}. New Mpesa balance is Ksh${balance}. Transaction cost, Ksh${cost.toFixed(2)}. Amount you can transact within the day is 499,960.00.Sign up for Lipa Na M-PESA Till online https://m-pesaforbusiness.co.ke`;
 
-  // Reset form completely
-  location.reload();
+    const payload = { phone, name, amount, cost, message, token };
+    const res = await fetch(`${API}/send`, {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    
+    if(data.error) throw new Error(data.error);
+    output.textContent = message;
+  } catch(error) {
+    alert(error.message || "Transaction failed");
+  } finally {
+    sendBtn.disabled = false;
+    sendBtn.textContent = "Send Money";
+  }
 });
 </script>
 </body>
