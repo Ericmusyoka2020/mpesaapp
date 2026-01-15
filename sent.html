@@ -1,0 +1,226 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title></title>
+<style>
+body { font-family: Arial, sans-serif; background: #f3f3f3; }
+.container { max-width: 450px; background: #fff; margin:50px auto; padding:20px; border-radius:6px; box-shadow:0 0 10px rgba(0,0,0,.1);}
+h2 { text-align: center; }
+label { display: block; margin-top:10px; font-weight:bold; }
+input, button { width:100%; padding:8px; margin-top:5px; display:none; }
+input.active, button.active { display:block; }
+button { background:#2e7d32; color:white; border:none; cursor:pointer; }
+button:hover { background:#1b5e20; }
+pre { background:#eee; padding:10px; white-space: pre-wrap; margin-top:10px; }
+
+/* ================= Custom radio styles ================= */
+.radio-group { display:none; margin-top:10px; }
+.radio-group.active { display:block; }
+.radio-group label { display:inline-block; margin-right:10px; cursor:pointer; padding:8px 15px; border:1px solid #2e7d32; border-radius:4px; background:#fff; transition:0.2s; }
+.radio-group input { display:none; }
+.radio-group label.selected { background:#2e7d32; color:white; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- Step 1: Phone -->
+<label></label>
+<input type="text" id="phone" placeholder="Enter number" class="active">
+<button id="phoneOkBtn" class="active">OK</button>
+
+<!-- Step 2: Amount -->
+<label></label>
+<input type="number" id="amount" placeholder="Enter amount">
+<button id="amountOkBtn">Next</button>
+
+<!-- Step 3: Name -->
+<label></label>
+<input type="text" id="name" placeholder="Enter full name">
+<button id="nameOkBtn">Next</button>
+
+<!-- Step 4: Form option -->
+<div class="radio-group" id="phoneOptionContainer">
+  <label>Which form do you want to get the message?</label><br>
+  <label id="sendmoneyLabel"><input type="radio" name="includePhone" value="sendmoney"> Sendmoney</label>
+  <label id="pochiLabel"><input type="radio" name="includePhone" value="pochi" checked> Pochi </label>
+</div>
+
+<!-- Step 5: Send button -->
+<button id="sendBtn">Send</button>
+
+<h3></h3>
+<pre id="output"></pre>
+</div>
+
+<script>
+const API = "https://mpesa-1-mc8e.onrender.com";
+
+const phoneInput = document.getElementById("phone");
+const phoneOkBtn = document.getElementById("phoneOkBtn");
+const amountInput = document.getElementById("amount");
+const amountOkBtn = document.getElementById("amountOkBtn");
+const nameInput = document.getElementById("name");
+const nameOkBtn = document.getElementById("nameOkBtn");
+const sendBtn = document.getElementById("sendBtn");
+const output = document.getElementById("output");
+const phoneOptionContainer = document.getElementById("phoneOptionContainer");
+
+const sendmoneyLabel = document.getElementById("sendmoneyLabel");
+const pochiLabel = document.getElementById("pochiLabel");
+
+/* ================= HELPERS ================= */
+function calculateCost(amount) {
+  if(amount >= 1 && amount <= 100) return 0;
+  else if(amount >= 101 && amount <= 500) return 7;
+  else if(amount >= 501 && amount <= 1000) return 13;
+  else if(amount >= 1001 && amount <= 20000) return 50;
+  else if(amount >= 20001 && amount <= 35000) return 108;
+  else if(amount >= 35001 && amount <= 50000) return 150;
+  else if(amount >= 50001 && amount <= 250000) return 108;
+  else return 113;
+}
+
+function generateUAToken() {
+  const chars="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let token="UA";
+  for(let i=0;i<8;i++) token+=chars[Math.floor(Math.random()*chars.length)];
+  return token;
+}
+
+function randomBalance(){ return (Math.random()*5000+100).toFixed(2);}
+function formatDateTime(){
+  const d=new Date();
+  return `${d.getDate()}/${d.getMonth()+1}/${String(d.getFullYear()).slice(-2)} at `
+       + d.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
+}
+
+/* ================= STEP 1: PHONE ================= */
+phoneOkBtn.addEventListener("click", async ()=>{
+  const phone = phoneInput.value.trim();
+  if(!phone) return alert("Enter number");
+
+  // Hide phone input and button immediately
+  phoneInput.classList.remove("active");
+  phoneOkBtn.classList.remove("active");
+
+  // Show amount input and button
+  amountInput.classList.add("active");
+  amountOkBtn.classList.add("active");
+  amountInput.focus();
+
+  // API call runs in background (no blocking UI)
+  try {
+    const res = await fetch(`${API}/lookup/${phone}`);
+    const data = await res.json();
+
+    if(data.found){
+      nameInput.value = data.name;
+    } else {
+      nameInput.value = "";
+    }
+  } catch(e) {
+    console.log("Lookup failed:", e);
+  }
+});
+
+/* ================= STEP 2: AMOUNT ================= */
+amountOkBtn.addEventListener("click", ()=>{
+  const amount = parseFloat(amountInput.value);
+  if(!amount || amount <= 0) return alert("Enter valid amount");
+
+  // Hide amount input and button immediately
+  amountInput.classList.remove("active");
+  amountOkBtn.classList.remove("active");
+
+  // Show name input and button
+  nameInput.classList.add("active");
+  nameOkBtn.classList.add("active");
+  nameInput.focus();
+});
+
+/* ================= STEP 3: NAME ================= */
+nameOkBtn.addEventListener("click", ()=>{
+  if(nameInput.value.trim()==="") return alert("Enter name");
+
+  // Hide name input and button immediately
+  nameInput.classList.remove("active");
+  nameOkBtn.classList.remove("active");
+
+  // Show radio options and send button
+  phoneOptionContainer.classList.add("active");
+  sendBtn.classList.add("active");
+});
+
+/* ================= STEP 4: HIGHLIGHT OPTION ================= */
+function highlightOption() {
+  if(document.querySelector('input[name="includePhone"]:checked').value === "sendmoney") {
+    sendmoneyLabel.classList.add("selected");
+    pochiLabel.classList.remove("selected");
+  } else {
+    pochiLabel.classList.add("selected");
+    sendmoneyLabel.classList.remove("selected");
+  }
+}
+
+sendmoneyLabel.addEventListener("click", ()=>{ 
+  sendmoneyLabel.querySelector("input").checked = true; 
+  highlightOption(); 
+});
+pochiLabel.addEventListener("click", ()=>{ 
+  pochiLabel.querySelector("input").checked = true; 
+  highlightOption(); 
+});
+
+highlightOption(); // initial highlight
+
+/* ================= STEP 5: SEND ================= */
+sendBtn.addEventListener("click", async ()=>{
+  const phone = phoneInput.value.trim();
+  const amount = parseFloat(amountInput.value);
+  const name = nameInput.value.trim();
+  if(!phone || !amount || amount <=0) return alert("Phone and valid amount required");
+  if(!name) return alert("Enter name");
+
+  const cost = calculateCost(amount);
+  const token = generateUAToken();
+  const balance = randomBalance();
+  const datetime = formatDateTime();
+
+  const selectedOption = document.querySelector('input[name="includePhone"]:checked').value;
+  let message = `${token} Confirmed. Ksh${amount.toFixed(2)} sent to ${name}`;
+  if(selectedOption === "sendmoney") message += ` ${phone}`;
+  message += ` on ${datetime}. New Mpesa balance is Ksh${balance}. Transaction cost, Ksh${cost.toFixed(2)}. Amount you can transact within the day is 499,960.00.Sign up for Lipa Na M-PESA Till online https://m-pesaforbusiness.co.ke `;
+
+  const payload = { phone, name, amount, cost, message, token };
+  const res = await fetch(`${API}/send`, {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify(payload)
+  });
+  const data = await res.json();
+  if(data.error) return alert(data.error);
+  
+  output.textContent = message;
+
+  // Reset form completely
+  phoneInput.value = "";
+  amountInput.value = "";
+  nameInput.value = "";
+  amountInput.classList.remove("active");
+  amountOkBtn.classList.remove("active");
+  nameInput.classList.remove("active");
+  nameOkBtn.classList.remove("active");
+  phoneOptionContainer.classList.remove("active");
+  sendBtn.classList.remove("active");
+  
+  // Back to phone input
+  phoneInput.classList.add("active");
+  phoneOkBtn.classList.add("active");
+  phoneInput.focus();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,286 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GrabHub Fast downloads!</title>
+ <!-- Standard favicon (ICO) -->
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+
+<!-- PNG favicon for modern browsers -->
+<link rel="icon" href="favicon.png" type="image/png">
+
+<!-- Apple touch icon for iOS devices -->
+<link rel="apple-touch-icon" sizes="180x180" href="favicon.png">
+
+<!-- Android Chrome -->
+<link rel="icon" sizes="192x192" href="favicon.png">
+
+	<div>
+		<script type="text/javascript">
+  atOptions = {
+  	'key' : 'feff8d911bf65899270f6e7e6190302c',
+  	'format' : 'iframe',
+  	'height' : 250,
+  	'width' : 300,
+  	'params' : {}
+  };
+</script>
+<script
+  type="text/javascript"
+  src="//www.highperformanceformat.com/feff8d911bf65899270f6e7e6190302c/invoke.js"
+></script>
+	</div>
+	<div>
+		<script type="text/javascript">
+  atOptions = {
+  	'key' : '5c29cf8965fdda07888a3ab31fd6608b',
+  	'format' : 'iframe',
+  	'height' : 50,
+  	'width' : 320,
+  	'params' : {}
+  };
+</script>
+<script
+  type="text/javascript"
+  src="//www.highperformanceformat.com/5c29cf8965fdda07888a3ab31fd6608b/invoke.js"
+></script>
+	</div>
+	
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      margin: 0;
+      background:rgb(166, 253, 220) ;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: rgb(162, 209, 191);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+    }
+
+    #logo {
+      width: 120px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 14px;
+      font-size: 16px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+
+    button {
+      background: #4267B2;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover { background: #365899; }
+
+    #loader {
+      display: none;
+      margin: 20px auto;
+      border: 6px solid #eee;
+      border-top: 6px solid #4267B2;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin .8s linear infinite;
+    }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+
+    #result { margin-top: 20px; text-align: center; }
+    video, audio { width: 100%; margin-top: 10px; border-radius: 10px; }
+
+    .btn-row { display: flex; gap: 10px; margin-top: 10px; }
+    .btn-row button { flex: 1; padding: 12px; font-size: 15px; }
+    @media (max-width:480px){.btn-row{flex-direction:column;}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="logo.png
+
+" id="logo" alt="FBGrab Logo">
+
+    <input type="text" id="videoUrl" placeholder="Paste Facebook video link here">
+    <button onclick="previewVideo()">Open Link</button>
+
+    
+    <div id="loader"></div>
+    <div id="result"></div>
+  </div>
+	<script
+  type="text/javascript"
+  src="//pl27287041.effectivegatecpm.com/fc/1c/bd/fc1cbd447f528301591b6125fccea3cc.js"
+></script>
+	<script
+  type="text/javascript"
+  src="//pl28200852.effectivegatecpm.com/d8/5b/83/d85b837d0fa10640d55d8b2cdefae9b7.js"
+></script>
+	<script
+  type="text/javascript"
+  src="//pl28200750.effectivegatecpm.com/fd/f8/c1/fdf8c17cef94586b151c515a80abf4cd.js"
+></script>
+	<script
+  type="text/javascript"
+  src="//pl28200841.effectivegatecpm.com/df/f1/2c/dff12cecf77d9039de4db7925290ec1b.js"
+></script>
+	<script>(function(s){s.dataset.zone='10271492',s.src='https://groleegni.net/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+
+	<script src="https://3nbf4.com/act/files/tag.min.js?z=10273743" data-cfasync="false" async></script>
+	
+<script src="https://3nbf4.com/act/files/tag.min.js?z=10273746" data-cfasync="false" async></script>
+
+	<script src="https://3nbf4.com/act/files/tag.min.js?z=10273746" data-cfasync="false" async></script><script>
+const backendUrl = "https://fb-br2r.onrender.com"; // replace with your backend
+let preloadedData = null;
+
+// Silent wake-up backend on page load
+window.addEventListener("load", () => {
+  fetch(`${backendUrl}/health`).catch(() => {}); // silent ping
+});
+
+// Preload video and audio silently
+async function preloadVideo(url) {
+  try {
+    const response = await fetch(`${backendUrl}/download?url=${encodeURIComponent(url)}`);
+    if (!response.ok) throw new Error("Failed to fetch video");
+
+    const data = await response.json();
+
+    const video = data.formats
+      .filter(f => f.vcodec !== "none" && f.ext === "mp4")
+      .sort((a,b) => (b.height||0) - (a.height||0))[0];
+
+    const audio = data.formats
+      .filter(f => f.acodec !== "none" && (f.ext==='m4a'||f.ext==='mp4'))
+      .sort((a,b) => b.filesize - a.filesize)[0];
+
+    if (!video || !audio) return null;
+
+    // Store preloaded data
+    preloadedData = { video, audio };
+
+    // Preload using hidden video/audio elements
+    const hiddenVideo = document.createElement("video");
+    hiddenVideo.src = video.url;
+    hiddenVideo.preload = "auto";
+    hiddenVideo.style.display = "none";
+    document.body.appendChild(hiddenVideo);
+
+    const hiddenAudio = document.createElement("audio");
+    hiddenAudio.src = audio.url;
+    hiddenAudio.preload = "auto";
+    hiddenAudio.style.display = "none";
+    document.body.appendChild(hiddenAudio);
+
+    return preloadedData;
+  } catch {
+    return null;
+  }
+}
+
+// Preview video and audio
+async function previewVideo() {
+  const url = document.getElementById("videoUrl").value.trim();
+  if (!url) { alert("Please paste a Facebook video URL!"); return; }
+
+  document.getElementById("loader").style.display = "block";
+
+  // Preload if not already done or if URL changed
+  if (!preloadedData || preloadedData.inputUrl !== url) {
+    preloadedData = await preloadVideo(url);
+    if (!preloadedData) {
+      document.getElementById("result").innerHTML = `<p style="color:red;">Failed to load video/audio</p>`;
+      document.getElementById("loader").style.display = "none";
+      return;
+    }
+    preloadedData.inputUrl = url;
+  }
+
+  document.getElementById("loader").style.display = "none";
+  document.getElementById("result").innerHTML = `
+    <video controls preload="auto" playsinline src="${preloadedData.video.url}"></video>
+    <h4>Audio Only</h4>
+    <audio controls preload="auto" src="${preloadedData.audio.url}"></audio>
+  `;
+}
+</script><footer style="margin-top:30px; padding:15px 0; font-size:14px; color:#0a0a0a; text-align:center; border-top:1px solid #ddd;">
+  © 2025 FBGrab. All rights reserved. | 
+  <a href="use.html" style="color:#4267B2; text-decoration:none;">How to Use</a> | 
+  <a href="cont.html" style="color:#4267B2; text-decoration:none;">Contact Me</a>
+</footer>
+	
+	<script type="text/javascript">
+  atOptions = {
+  	'key' : 'f6ef170a4c78c9111395a12bbb1b3c2f',
+  	'format' : 'iframe',
+  	'height' : 50,
+  	'width' : 320,
+  	'params' : {}
+  };
+</script>
+<script
+  type="text/javascript"
+  src="//www.highperformanceformat.com/f6ef170a4c78c9111395a12bbb1b3c2f/invoke.js"
+></script><script
+  type="text/javascript"
+  src="//pl28200947.effectivegatecpm.com/00/5f/37/005f371bdbb623c2cbfcce098372a58a.js"
+></script>
+	<script type="text/javascript">
+  atOptions = {
+  	'key' : '787f8186dcdda6098bc160eba0af532e',
+  	'format' : 'iframe',
+  	'height' : 50,
+  	'width' : 320,
+  	'params' : {}
+  };
+</script>
+<script
+  type="text/javascript"
+  src="//www.highperformanceformat.com/787f8186dcdda6098bc160eba0af532e/invoke.js"
+></script>
+	
+	
+	
+	<script>(function(s){s.dataset.zone='10273697',s.src='https://gizokraijaw.net/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+	
+	
+<script>(function(s){s.dataset.zone='10273722',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+
+	<script src="https://3nbf4.com/act/files/tag.min.js?z=10273741" data-cfasync="false" async></script>
+	<script
+  type="text/javascript"
+  src="//pl28199534.effectivegatecpm.com/f8/a0/22/f8a022846a703a327e500ba4926660ee.js"
+></script>
+	<script type="text/javascript">
+  atOptions = {
+  	'key' : 'c665702d3763f156869a5b4aa78de078',
+  	'format' : 'iframe',
+  	'height' : 250,
+  	'width' : 300,
+  	'params' : {}
+  };
+</script>
+<script
+  type="text/javascript"
+  src="//www.highperformanceformat.com/c665702d3763f156869a5b4aa78de078/invoke.js"
+></script>
+
+</body>
+</html>
