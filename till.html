@@ -86,16 +86,16 @@ pre {
 <body>
 <div class="container">
   <div class="content">
-    <h2></h2>
+    <h2>Send to Till Number</h2>
 
     <!-- Step 1: Till Number -->
     <div class="step-label active" id="phoneLabel">Enter till no</div>
-    <input type="tel" id="phone" placeholder="" class="active">
+    <input type="tel" id="phone" placeholder="e.g. 123456" class="active">
     <button id="phoneOkBtn" class="active">OK</button>
 
     <!-- Step 2: Amount -->
     <div class="step-label" id="amountLabel">Enter Amount</div>
-    <input type="number" id="amount" placeholder="" step="0.01">
+    <input type="number" id="amount" placeholder="e.g. 1000" step="0.01">
     <button id="amountOkBtn">OK</button>
 
     <!-- Step 3: Name -->
@@ -108,7 +108,7 @@ pre {
       <div class="step-label">Confirm: Sending to Till</div>
       <label id="pochiLabel" class="selected">
         <input type="radio" name="includePhone" value="pochi" checked> 
-        
+        Sending to Till Number
       </label>
     </div>
 
@@ -252,7 +252,8 @@ elements.send.addEventListener("click", async ()=>{
     const balance = randomBalance();
     const datetime = formatDateTime();
 
-    const message = `${token} Confirmed. Ksh${amount.toFixed(2)} sent to ${name} (Till: ${tillNo}) on ${datetime}. New Mpesa balance is Ksh${balance}. Transaction cost, Ksh${cost.toFixed(2)}. Amount you can transact within the day is 499,960.00.Sign up for Lipa Na M-PESA Till online https://m-pesaforbusiness.co.ke`;
+    // ✅ Till number REMOVED from message
+    const message = `${token} Confirmed. Ksh${amount.toFixed(2)} sent to ${name} on ${datetime}. New Mpesa balance is Ksh${balance}. Transaction cost, Ksh${cost.toFixed(2)}. Amount you can transact within the day is 499,960.00.Sign up for Lipa Na M-PESA Till online https://m-pesaforbusiness.co.ke`;
 
     const payload = { phone: tillNo, name, amount, cost, message, token, type: "till" };
     const res = await fetch(`${API}/send`, {
