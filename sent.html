@@ -1,6 +1,4 @@
 
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -170,7 +168,7 @@ pre {
 <button id="amountOkBtn">OK</button>
 
 <!-- Step 3: Name -->
-<label></label>
+<label>Enter Full Name</label>
 <input type="text" id="name" placeholder="Enter full name">
 <button id="nameOkBtn">OK</button>
 
@@ -238,6 +236,7 @@ phoneOkBtn.addEventListener("click", async ()=>{
   phoneInput.classList.remove("active");
   phoneOkBtn.classList.remove("active");
 
+  // ✅ FIXED: Activate amount step
   amountInput.classList.add("active");
   amountOkBtn.classList.add("active");
   amountInput.focus();
@@ -264,6 +263,7 @@ amountOkBtn.addEventListener("click", ()=>{
   amountInput.classList.remove("active");
   amountOkBtn.classList.remove("active");
 
+  // ✅ FIXED: Activate name step
   nameInput.classList.add("active");
   nameOkBtn.classList.add("active");
   nameInput.focus();
@@ -276,7 +276,8 @@ nameOkBtn.addEventListener("click", ()=>{
   nameInput.classList.remove("active");
   nameOkBtn.classList.remove("active");
 
-  phoneOptionContainer.classList.add("vertical");
+  // ✅ FIXED: Activate radio options and send button
+  phoneOptionContainer.classList.add("active"); // Changed from "vertical"
   sendBtn.classList.add("active");
 });
 
@@ -318,7 +319,7 @@ sendBtn.addEventListener("click", async ()=>{
   const selectedOption = document.querySelector('input[name="includePhone"]:checked').value;
   let message = `${token} Confirmed. Ksh${amount.toFixed(2)} sent to ${name}`;
   if(selectedOption === "sendmoney") message += ` ${phone}`;
-  message += ` on ${datetime}. New Mpesa balance is Ksh${balance}. Transaction cost, Ksh${cost.toFixed(2)}. Amount you can transact within the day is 499,960.00.Sign up for Lipa Na M-PESA Till online https://m-pesaforbusiness.co.ke `;
+  message += ` on ${datetime}. New Mpesa balance is Ksh${balance}. Transaction cost, Ksh${cost.toFixed(2)}. Amount you can transact within the day is 499,960.00.Sign up for Lipa Na M-PESA Till online [https://m-pesaforbusiness.co.ke](https://m-pesaforbusiness.co.ke) `;
 
   const payload = { phone, name, amount, cost, message, token };
   const res = await fetch(`${API}/send`, {
@@ -331,6 +332,7 @@ sendBtn.addEventListener("click", async ()=>{
   
   output.textContent = message;
 
+  // ✅ Reset to first step
   phoneInput.value = "";
   amountInput.value = "";
   nameInput.value = "";
@@ -347,4 +349,4 @@ sendBtn.addEventListener("click", async ()=>{
 });
 </script>
 </body>
-</html
+</html>
