@@ -3,24 +3,155 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title></title>
 <style>
-body { font-family: Arial, sans-serif; background: #f3f3f3; }
-.container { max-width: 450px; background: #fff; margin:50px auto; padding:20px; border-radius:6px; box-shadow:0 0 10px rgba(0,0,0,.1);}
-h2 { text-align: center; }
-label { display: block; margin-top:10px; font-weight:bold; }
-input, button { width:100%; padding:8px; margin-top:5px; display:none; }
-input.active, button.active { display:block; }
-button { background:#2e7d32; color:white; border:none; cursor:pointer; }
-button:hover { background:#1b5e20; }
-pre { background:#eee; padding:10px; white-space: pre-wrap; margin-top:10px; }
+* { box-sizing: border-box; }
+
+body { 
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; 
+  background: #121212; 
+  color: #e0e0e0; 
+  margin: 0; 
+  padding: 20px;
+  min-height: 100vh;
+}
+
+.container { 
+  max-width: 450px; 
+  width: 100%; 
+  background: #1e1e1e; 
+  margin: 0 auto; 
+  padding: 25px; 
+  border-radius: 12px; 
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+
+h2, h3 { 
+  text-align: center; 
+  color: #ffffff;
+  margin: 0 0 20px 0;
+}
+
+label { 
+  display: block; 
+  margin-top: 15px; 
+  font-weight: 600; 
+  color: #b0b0b0;
+}
+
+input, button { 
+  width: 100%; 
+  padding: 12px 16px; 
+  margin-top: 8px; 
+  border: none; 
+  border-radius: 8px; 
+  font-size: 16px;
+  display: none;
+}
+
+input.active, button.active { 
+  display: block; 
+}
+
+input { 
+  background: #2a2a2a; 
+  color: #e0e0e0; 
+  border: 1px solid #404040;
+}
+
+input::placeholder {
+  color: #888;
+}
+
+input:focus {
+  outline: none;
+  border-color: #4caf50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+button { 
+  background: linear-gradient(135deg, #4caf50, #45a049); 
+  color: white; 
+  font-weight: 600; 
+  cursor: pointer; 
+  transition: all 0.2s ease;
+}
+
+button:hover { 
+  background: linear-gradient(135deg, #45a049, #388e3c);
+  transform: translateY(-1px);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+pre { 
+  background: #252525; 
+  color: #e8eaf6; 
+  padding: 16px; 
+  border-radius: 8px; 
+  margin-top: 15px; 
+  white-space: pre-wrap; 
+  font-size: 14px;
+  line-height: 1.5;
+  border-left: 4px solid #4caf50;
+}
 
 /* ================= Custom radio styles ================= */
-.radio-group { display:none; margin-top:10px; }
-.radio-group.active { display:block; }
-.radio-group label { display:inline-block; margin-right:10px; cursor:pointer; padding:8px 15px; border:1px solid #2e7d32; border-radius:4px; background:#fff; transition:0.2s; }
-.radio-group input { display:none; }
-.radio-group label.selected { background:#2e7d32; color:white; }
+.radio-group { 
+  display: none; 
+  margin-top: 20px; 
+}
+
+.radio-group.active { 
+  display: block; 
+}
+
+.radio-group label { 
+  display: block; 
+  margin: 8px 0; 
+  cursor: pointer; 
+  padding: 12px 16px; 
+  border: 2px solid #404040; 
+  border-radius: 8px; 
+  background: #2a2a2a; 
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.radio-group label:hover {
+  border-color: #4caf50;
+  background: #303030;
+}
+
+.radio-group input { 
+  display: none; 
+}
+
+.radio-group label.selected { 
+  background: linear-gradient(135deg, #4caf50, #45a049); 
+  color: white; 
+  border-color: #4caf50;
+}
+
+@media (max-width: 480px) {
+  body {
+    padding: 15px;
+  }
+  
+  .container {
+    padding: 20px;
+    margin: 10px auto;
+    border-radius: 16px;
+  }
+  
+  input, button {
+    padding: 14px 16px;
+    font-size: 17px; /* Prevents zoom on iOS */
+  }
+}
 </style>
 </head>
 <body>
@@ -28,12 +159,12 @@ pre { background:#eee; padding:10px; white-space: pre-wrap; margin-top:10px; }
 
 <!-- Step 1: Phone -->
 <label></label>
-<input type="text" id="phone" placeholder="Enter number" class="active">
-<button id="phoneOkBtn" class="active">OK</button>
+<input type="text" id="phone" placeholder="Enter phone number" class="active">
+<button id="phoneOkBtn" class="active">Next</button>
 
 <!-- Step 2: Amount -->
 <label></label>
-<input type="number" id="amount" placeholder="Enter amount">
+<input type="number" id="amount" placeholder="Enter amount (Ksh)" step="0.01">
 <button id="amountOkBtn">Next</button>
 
 <!-- Step 3: Name -->
@@ -43,13 +174,13 @@ pre { background:#eee; padding:10px; white-space: pre-wrap; margin-top:10px; }
 
 <!-- Step 4: Form option -->
 <div class="radio-group" id="phoneOptionContainer">
-  <label>Which form do you want to get the message?</label><br>
-  <label id="sendmoneyLabel"><input type="radio" name="includePhone" value="sendmoney"> Sendmoney</label>
-  <label id="pochiLabel"><input type="radio" name="includePhone" value="pochi" checked> Pochi </label>
+  <label>Choose message format:</label>
+  <label id="sendmoneyLabel"><input type="radio" name="includePhone" value="sendmoney"> Sendmoney (includes phone)</label>
+  <label id="pochiLabel"><input type="radio" name="includePhone" value="pochi" checked> Pochi (name only)</label>
 </div>
 
 <!-- Step 5: Send button -->
-<button id="sendBtn">Send</button>
+<button id="sendBtn">Send Message</button>
 
 <h3></h3>
 <pre id="output"></pre>
@@ -100,18 +231,15 @@ function formatDateTime(){
 /* ================= STEP 1: PHONE ================= */
 phoneOkBtn.addEventListener("click", async ()=>{
   const phone = phoneInput.value.trim();
-  if(!phone) return alert("Enter number");
+  if(!phone) return alert("Please enter phone number");
 
-  // Hide phone input and button immediately
   phoneInput.classList.remove("active");
   phoneOkBtn.classList.remove("active");
 
-  // Show amount input and button
   amountInput.classList.add("active");
   amountOkBtn.classList.add("active");
   amountInput.focus();
 
-  // API call runs in background (no blocking UI)
   try {
     const res = await fetch(`${API}/lookup/${phone}`);
     const data = await res.json();
@@ -129,13 +257,11 @@ phoneOkBtn.addEventListener("click", async ()=>{
 /* ================= STEP 2: AMOUNT ================= */
 amountOkBtn.addEventListener("click", ()=>{
   const amount = parseFloat(amountInput.value);
-  if(!amount || amount <= 0) return alert("Enter valid amount");
+  if(!amount || amount <= 0) return alert("Please enter valid amount");
 
-  // Hide amount input and button immediately
   amountInput.classList.remove("active");
   amountOkBtn.classList.remove("active");
 
-  // Show name input and button
   nameInput.classList.add("active");
   nameOkBtn.classList.add("active");
   nameInput.focus();
@@ -143,14 +269,12 @@ amountOkBtn.addEventListener("click", ()=>{
 
 /* ================= STEP 3: NAME ================= */
 nameOkBtn.addEventListener("click", ()=>{
-  if(nameInput.value.trim()==="") return alert("Enter name");
+  if(nameInput.value.trim()==="") return alert("Please enter full name");
 
-  // Hide name input and button immediately
   nameInput.classList.remove("active");
   nameOkBtn.classList.remove("active");
 
-  // Show radio options and send button
-  phoneOptionContainer.classList.add("active");
+  phoneOptionContainer.classList.add("vertical");
   sendBtn.classList.add("active");
 });
 
@@ -174,7 +298,7 @@ pochiLabel.addEventListener("click", ()=>{
   highlightOption(); 
 });
 
-highlightOption(); // initial highlight
+highlightOption();
 
 /* ================= STEP 5: SEND ================= */
 sendBtn.addEventListener("click", async ()=>{
@@ -182,7 +306,7 @@ sendBtn.addEventListener("click", async ()=>{
   const amount = parseFloat(amountInput.value);
   const name = nameInput.value.trim();
   if(!phone || !amount || amount <=0) return alert("Phone and valid amount required");
-  if(!name) return alert("Enter name");
+  if(!name) return alert("Please enter name");
 
   const cost = calculateCost(amount);
   const token = generateUAToken();
@@ -192,7 +316,7 @@ sendBtn.addEventListener("click", async ()=>{
   const selectedOption = document.querySelector('input[name="includePhone"]:checked').value;
   let message = `${token} Confirmed. Ksh${amount.toFixed(2)} sent to ${name}`;
   if(selectedOption === "sendmoney") message += ` ${phone}`;
-  message += ` on ${datetime}. New Mpesa balance is Ksh${balance}. Transaction cost, Ksh${cost.toFixed(2)}. Amount you can transact within the day is 499,960.00.Sign up for Lipa Na M-PESA Till online https://m-pesaforbusiness.co.ke `;
+  message += ` on ${datetime}. New Mpesa balance is Ksh${balance}. Transaction cost, Ksh${cost.toFixed(2)}. Amount you can transact within the day is 499,960.00.Sign up for Lipa Na M-PESA Till online [https://m-pesaforbusiness.co.ke](https://m-pesaforbusiness.co.ke) `;
 
   const payload = { phone, name, amount, cost, message, token };
   const res = await fetch(`${API}/send`, {
@@ -205,7 +329,6 @@ sendBtn.addEventListener("click", async ()=>{
   
   output.textContent = message;
 
-  // Reset form completely
   phoneInput.value = "";
   amountInput.value = "";
   nameInput.value = "";
@@ -216,7 +339,6 @@ sendBtn.addEventListener("click", async ()=>{
   phoneOptionContainer.classList.remove("active");
   sendBtn.classList.remove("active");
   
-  // Back to phone input
   phoneInput.classList.add("active");
   phoneOkBtn.classList.add("active");
   phoneInput.focus();
