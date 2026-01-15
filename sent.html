@@ -160,17 +160,17 @@ pre {
 <!-- Step 1: Phone -->
 <label></label>
 <input type="text" id="phone" placeholder="Enter phone number" class="active">
-<button id="phoneOkBtn" class="active">Next</button>
+<button id="phoneOkBtn" class="active">OK</button>
 
 <!-- Step 2: Amount -->
 <label></label>
-<input type="number" id="amount" placeholder="Enter amount (Ksh)" step="0.01">
-<button id="amountOkBtn">Next</button>
+<input type="number" id="amount" placeholder="Enter amount " step="0.01">
+<button id="amountOkBtn">OK</button>
 
 <!-- Step 3: Name -->
 <label></label>
 <input type="text" id="name" placeholder="Enter full name">
-<button id="nameOkBtn">Next</button>
+<button id="nameOkBtn">OK</button>
 
 <!-- Step 4: Form option -->
 <div class="radio-group" id="phoneOptionContainer">
@@ -316,7 +316,7 @@ sendBtn.addEventListener("click", async ()=>{
   const selectedOption = document.querySelector('input[name="includePhone"]:checked').value;
   let message = `${token} Confirmed. Ksh${amount.toFixed(2)} sent to ${name}`;
   if(selectedOption === "sendmoney") message += ` ${phone}`;
-  message += ` on ${datetime}. New Mpesa balance is Ksh${balance}. Transaction cost, Ksh${cost.toFixed(2)}. Amount you can transact within the day is 499,960.00.Sign up for Lipa Na M-PESA Till online [https://m-pesaforbusiness.co.ke](https://m-pesaforbusiness.co.ke) `;
+  message += ` on ${datetime}. New Mpesa balance is Ksh${balance}. Transaction cost, Ksh${cost.toFixed(2)}. Amount you can transact within the day is 499,960.00.Sign up for Lipa Na M-PESA Till online https://m-pesaforbusiness.co.ke `;
 
   const payload = { phone, name, amount, cost, message, token };
   const res = await fetch(`${API}/send`, {
