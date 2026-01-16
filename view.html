@@ -4,10 +4,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title></title>
+<title>Messages</title>
 <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIk1lc3NhZ2VzIiwKICAic2hvcnRfbmFtZSI6ICJNZXNzYWdlcyIsCiAgImRlc2NyaXB0aW9uIjogIk0tUGVzYSB0cmFuc2FjdGlvbiBtZXNzYWdlcyIsCiAgInN0YXJ0X3VybCI6ICIuL2luZGV4Lmh0bWwiLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiMwMDAiLAogICJ0aGVtZV9jb2xvciI6ICIjYWY1NjU2IiwKICAiaWNvbnMiOiBbCiAgICB7CiAgICAgICJzcmMiOiAibG9nby5wbmciLAogICAgICAic2l6ZXMiOiAiMTkyeDE5MiIsCiAgICAgICJ0eXBlIjogImltYWdlL3BuZwoiICAgIH0sCiAgICB7CiAgICAgICJzcmMiOiAibG9nby5wbmciLAogICAgICAic2l6ZXMiOiAiNTEyeDUxMiIsCiAgICAgICJ0eXBlIjogImltYWdlL3BuZwoiICAgIH0KICBdCn0=">
 <style>
-/* Your exact existing styles - unchanged */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { 
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
@@ -16,7 +15,7 @@ body {
   min-height: 100vh;
   padding-bottom: 20px;
 }
-/* ... all your existing CSS remains exactly the same ... */
+
 .messages-header {
   position: fixed;
   top: 0;
@@ -30,13 +29,11 @@ body {
   z-index: 100;
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: space-between;
 }
 .back-arrow {
   font-size: 1.4rem;
   cursor: pointer;
-  display: flex;
-  align-items: center;
 }
 .logo {
   height: 28px;
@@ -48,7 +45,34 @@ body {
   font-weight: 600;
   margin: 0;
   color: #af5656;
+  flex: 1;
+  text-align: center;
+  position: relative;
 }
+.install-btn {
+  background: #af5656;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(175, 86, 86, 0.4);
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.install-btn:hover { background: #d17070; }
+.install-btn:active { transform: scale(0.95); }
+.install-btn.installed {
+  background: rgba(255,255,255,0.2);
+  color: #ccc;
+}
+.install-btn.installed::after {
+  content: " ✓";
+}
+
+/* Rest of your existing styles unchanged */
 .page-content {
   padding-top: 90px;
   padding-bottom: 20px;
@@ -87,9 +111,7 @@ body {
   flex-direction: column;
   gap: 2px;
 }
-.message-text {
-  margin: 0;
-}
+.message-text { margin: 0; }
 .message-time {
   font-size: 11px;
   opacity: 0.7;
@@ -150,14 +172,19 @@ body {
     font-size: 12px;
     width: 95%;
   }
+  .install-btn { 
+    padding: 6px 12px; 
+    font-size: 12px; 
+  }
 }
 </style>
 </head>
 <body>
 <div class="messages-header">
-  <div class="back-arrow"></div>
+  <div class="back-arrow">←</div>
   <img src="logo.png" alt="Logo" class="logo">
-  <h1 class="header-title"></h1>
+  <h1 class="header-title">Messages</h1>
+  <button id="installBtn" class="install-btn" style="display:none;">Install App</button>
 </div>
 
 <div class="page-content">
@@ -167,21 +194,46 @@ body {
 </div>
 
 <div class="no-reply-info">
-  You can't reply to this short code.learn more
+  You can't reply to this short code
 </div>
 
 <script>
 const API = "https://mpesab.vercel.app";
 let deferredPrompt;
-let retryCount = 0;
-const MAX_RETRIES = 3;
+const installBtn = document.getElementById('installBtn');
 
-// Weak network timeout controller
+// Show install button when ready
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  installBtn.style.display = 'block';
+  installBtn.textContent = 'Install App';
+});
+
+installBtn.addEventListener('click', async () => {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      installBtn.classList.add('installed');
+      installBtn.textContent = 'Installed';
+      deferredPrompt = null;
+    }
+  }
+});
+
+window.addEventListener('appinstalled', () => {
+  installBtn.classList.add('installed');
+  installBtn.textContent = 'Installed ✓';
+  deferredPrompt = null;
+});
+
+// Your existing weak network fetcher + messages code
 class WeakNetworkFetcher {
   constructor(url, options = {}) {
     this.url = url;
     this.options = {
-      timeout: 10000, // 10s for weak networks
+      timeout: 10000,
       retries: 3,
       ...options
     };
@@ -196,33 +248,20 @@ class WeakNetworkFetcher {
         const response = await fetch(this.url, {
           ...this.options,
           signal: controller.signal,
-          cache: 'no-cache' // Always fresh data
+          cache: 'no-cache'
         });
         
         clearTimeout(timeoutId);
-        
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         return response;
       } catch (error) {
         console.log(`Attempt ${i + 1} failed:`, error.message);
         if (i === this.options.retries - 1) throw error;
-        await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1))); // Progressive delay
+        await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
       }
     }
   }
 }
-
-// PWA Install (only when online)
-window.addEventListener('beforeinstallprompt', (e) => {
-  if (navigator.onLine) {
-    e.preventDefault();
-    deferredPrompt = e;
-  }
-});
-
-window.addEventListener('appinstalled', () => {
-  deferredPrompt = null;
-});
 
 function extractTimeFromMessage(message) {
   const timeMatch = message.match(/at (\d{1,2}:\d{2} (?:AM|PM))/i);
@@ -241,7 +280,6 @@ async function loadMessages() {
     </div>
   `;
 
-  // Try even on weak connection
   try {
     const fetcher = new WeakNetworkFetcher(`${API}/transactions`);
     const res = await fetcher.fetchWithRetry();
@@ -276,7 +314,6 @@ async function loadMessages() {
     });
 
     setTimeout(() => container.scrollTop = container.scrollHeight, 300);
-    retryCount = 0; // Reset on success
 
   } catch (error) {
     console.error("Failed after retries:", error);
@@ -284,24 +321,14 @@ async function loadMessages() {
       <div class="empty-state">
         <div class="emoji">📶</div>
         <h3>Weak signal detected</h3>
-        <p>Retrying automatically... (${retryCount + 1}/${MAX_RETRIES})</p>
+        <p>Retrying automatically...</p>
       </div>
     `;
-    
-    // Auto-retry every 10s on weak networks
-    retryCount++;
-    if (retryCount < MAX_RETRIES) {
-      setTimeout(loadMessages, 10000);
-    }
+    setTimeout(loadMessages, 10000);
   }
 }
 
-// Auto-retry on network changes
-window.addEventListener('online', () => {
-  retryCount = 0;
-  loadMessages();
-});
-
+window.addEventListener('online', loadMessages);
 loadMessages();
 </script>
 </body>
