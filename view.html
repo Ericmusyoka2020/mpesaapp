@@ -5,11 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Messages</title>
-<link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIk1lc3NhZ2VzIiwKICAic2hvcnRfbmFtZSI6ICJNZXNzYWdlcyIsCiAgImRlc2NyaXB0aW9uIjogIk0tUGVzYSB0cmFuc2FjdGlvbiBtZXNzYWdlcyIsCiAgInN0YXJ0X3VybCI6ICIuL2luZGV4Lmh0bWwiLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiMwMDAiLAogICJ0aGVtZV9jb2xvciI6ICIjYWY1NjU2IiwKICAiaWNvbnMiOiBbCiAgICB7CiAgICAgICJzcmMiOiAiZGF0YTppbWFnZS9wbmc7YmFzZTY0LGlVBOR4bHgwZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXow...FAKE_BASE64", 
-CiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIgoiICAgIH0sCiAgICB7CiAgICAgICJzcmMiOiAiZGF0YTppbWFnZS9wbmc7YmFzZTY0LGlVBOR4bHgwZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXow...FAKE_BASE64", 
-CiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIgoiICAgIH0KICBdCn0=">
 <style>
-/* Your existing styles + button fix */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { 
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
@@ -18,7 +14,6 @@ body {
   min-height: 100vh;
   padding-bottom: 20px;
 }
-
 .messages-header {
   position: fixed;
   top: 0;
@@ -32,53 +27,25 @@ body {
   z-index: 100;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 12px;
 }
 .back-arrow {
   font-size: 1.4rem;
   cursor: pointer;
+  display: flex;
+  align-items: center;
 }
 .logo {
   height: 28px;
   width: auto;
   display: block;
-  background: #333; /* Fallback if no logo */
-  border-radius: 4px;
 }
 .header-title {
   font-size: 1.3rem;
   font-weight: 600;
   margin: 0;
   color: #af5656;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  flex: none;
 }
-.install-btn {
-  background: #af5656;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(175, 86, 86, 0.4);
-  transition: all 0.2s;
-  white-space: nowrap;
-}
-.install-btn:hover { background: #d17070; }
-.install-btn:active { transform: scale(0.95); }
-.install-btn.installed {
-  background: rgba(255,255,255,0.2);
-  color: #ccc;
-}
-.install-btn.installed::after {
-  content: " ✓";
-}
-
-/* Rest of your existing styles - unchanged */
 .page-content {
   padding-top: 90px;
   padding-bottom: 20px;
@@ -86,7 +53,7 @@ body {
   margin: 0 auto;
   background: #1a1919;
 }
-/* ... [all other styles exactly same as before] ... */
+/* Rest of your existing styles remain unchanged */
 .messages-container {
   background: #000;
   height: calc(100vh - 110px);
@@ -113,8 +80,14 @@ body {
   width: fit-content;
   margin-bottom: 8px;
 }
-.message-content { display: flex; flex-direction: column; gap: 2px; }
-.message-text { margin: 0; }
+.message-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.message-text {
+  margin: 0;
+}
 .message-time {
   font-size: 11px;
   opacity: 0.7;
@@ -169,7 +142,6 @@ body {
   .messages-header { padding: 12px 15px; }
   .header-title { font-size: 1.2rem; }
   .logo { height: 24px; }
-  .install-btn { padding: 6px 12px; font-size: 12px; }
   .no-reply-info { 
     bottom: 10px; 
     padding: 10px 16px; 
@@ -181,14 +153,14 @@ body {
 </head>
 <body>
 <div class="messages-header">
-  <div class="back-arrow">←</div>
-  <img src="logo.png" alt="Logo" class="logo" onerror="this.style.display='none'">
-  <h1 class="header-title">Messages</h1>
-  <button id="installBtn" class="install-btn">Install App</button>
+  <div class="back-arrow"></div>
+  <img src="logo.png" alt="Logo" class="logo">
+  <h1 class="header-title"></h1>
 </div>
 
 <div class="page-content">
   <div class="messages-container" id="messages">
+    <!-- Messages load here -->
   </div>
 </div>
 
@@ -198,117 +170,63 @@ body {
 
 <script>
 const API = "https://mpesab.vercel.app";
-let deferredPrompt;
-let isInstalled = false;
-const installBtn = document.getElementById('installBtn');
-
-// Show button immediately, handle install when ready
-installBtn.addEventListener('click', async () => {
-  if (deferredPrompt && !isInstalled) {
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === 'accepted') {
-      installBtn.classList.add('installed');
-      installBtn.innerHTML = 'Installed ✓';
-      isInstalled = true;
-    }
-  } else if (isInstalled) {
-    // Already installed, maybe refresh install check
-    window.location.reload();
-  }
-});
-
-// Capture PWA prompt
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  console.log('PWA ready');
-});
-
-window.addEventListener('appinstalled', () => {
-  installBtn.classList.add('installed');
-  installBtn.innerHTML = 'Installed ✓';
-  isInstalled = true;
-  deferredPrompt = null;
-});
-
-// Check if already installed
-window.addEventListener('load', () => {
-  if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
-    installBtn.classList.add('installed');
-    installBtn.innerHTML = 'Installed ✓';
-    isInstalled = true;
-  }
-});
-
-// Your existing weak network code (unchanged)
-class WeakNetworkFetcher {
-  constructor(url, options = {}) {
-    this.url = url;
-    this.options = { timeout: 10000, retries: 3, ...options };
-  }
-  async fetchWithRetry() {
-    for (let i = 0; i < this.options.retries; i++) {
-      try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), this.options.timeout);
-        const response = await fetch(this.url, {
-          ...this.options,
-          signal: controller.signal,
-          cache: 'no-cache'
-        });
-        clearTimeout(timeoutId);
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        return response;
-      } catch (error) {
-        console.log(`Attempt ${i + 1} failed:`, error.message);
-        if (i === this.options.retries - 1) throw error;
-        await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
-      }
-    }
-  }
-}
 
 function extractTimeFromMessage(message) {
   const timeMatch = message.match(/at (\d{1,2}:\d{2} (?:AM|PM))/i);
-  if (timeMatch) return timeMatch[1];
+  if (timeMatch) {
+    return timeMatch[1];
+  }
   const now = new Date();
   return now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 }
 
 async function loadMessages() {
-  const container = document.getElementById("messages");
-  container.innerHTML = `<div class="empty-state"><div class="emoji">⏳</div><h3>Connecting...</h3><p>Works on 2G/3G</p></div>`;
-
   try {
-    const fetcher = new WeakNetworkFetcher(`${API}/transactions`);
-    const res = await fetcher.fetchWithRetry();
+    const res = await fetch(`${API}/transactions`);
     const data = await res.json();
 
+    const container = document.getElementById("messages");
+    
     if (!data || !data.length) {
-      container.innerHTML = `<div class="empty-state"><div class="emoji">💬</div><h3>No messages yet</h3><p>Send a transaction to see messages here</p></div>`;
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="emoji">💬</div>
+          <h3>No messages yet</h3>
+          <p>Send a transaction to see messages here</p>
+        </div>
+      `;
       return;
     }
 
     const reversedData = [...data].reverse();
     container.innerHTML = "";
+    
     reversedData.forEach((tx, index) => {
       const messageTime = extractTimeFromMessage(tx.message);
+      
       const div = document.createElement("div");
       div.className = `message-bubble`;
       div.style.animation = `slideInUp 0.4s ease-out ${index * 0.1}s both`;
-      div.innerHTML = `<div class="message-content"><div class="message-text">${tx.message}</div><div class="message-time">${messageTime}</div></div>`;
+      div.innerHTML = `
+        <div class="message-content">
+          <div class="message-text">${tx.message}</div>
+          <div class="message-time">${messageTime}</div>
+        </div>
+      `;
       container.appendChild(div);
     });
-    setTimeout(() => container.scrollTop = container.scrollHeight, 300);
+
+    setTimeout(() => {
+      container.scrollTop = container.scrollHeight;
+    }, 300);
+
   } catch (error) {
-    console.error("Failed after retries:", error);
-    container.innerHTML = `<div class="empty-state"><div class="emoji">📶</div><h3>Weak signal detected</h3><p>Retrying automatically...</p></div>`;
-    setTimeout(loadMessages, 10000);
+    console.error("Failed to load messages:", error);
+    document.getElementById("messages").innerHTML = 
+      "<div style='text-align:center; padding:80px 20px; color:#888;'>Failed to load messages.<br>Check your connection.</div>";
   }
 }
 
-window.addEventListener('online', loadMessages);
 loadMessages();
 </script>
 </body>
