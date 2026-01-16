@@ -610,27 +610,4 @@ elements.send.addEventListener("click", async ()=>{
 </script>
 </body>
 </html>
-      type: "till"
-    };
     
-    const res = await fetch(`${API}/send`, {
-      method: "POST",
-      headers: {"Content-Type":"application/json"},
-      body: JSON.stringify(payload)
-    });
-    const data = await res.json();
-    
-    if(data.error) throw new Error(data.error);
-    
-    elements.output.textContent = message;
-    setTimeout(resetForm, 2000);
-  } catch(error) {
-    alert(error.message || "Transaction failed");
-  } finally {
-    elements.send.disabled = false;
-    elements.send.textContent = "Send Money";
-  }
-});
-</script>
-</body>
-</html>
