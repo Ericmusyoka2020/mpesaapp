@@ -7,6 +7,7 @@
 <title>Messages</title>
 <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIk1lc3NhZ2VzIiwKICAic2hvcnRfbmFtZSI6ICJNZXNzYWdlcyIsCiAgImRlc2NyaXB0aW9uIjogIk0tUGVzYSB0cmFuc2FjdGlvbiBtZXNzYWdlcyIsCiAgInN0YXJ0X3VybCI6ICIuL2luZGV4Lmh0bWwiLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiMwMDAiLAogICJ0aGVtZV9jb2xvciI6ICIjYWY1NjU2IiwKICAiaWNvbnMiOiBbCiAgICB7CiAgICAgICJzcmMiOiAibG9nby5wbmciLAogICAgICAic2l6ZXMiOiAiMTkyeDE5MiIsCiAgICAgICJ0eXBlIjogImltYWdlL3BuZwoiICAgIH0sCiAgICB7CiAgICAgICJzcmMiOiAibG9nby5wbmciLAogICAgICAic2l6ZXMiOiAiNTEyeDUxMiIsCiAgICAgICJ0eXBlIjogImltYWdlL3BuZwoiICAgIH0KICBdCn0=">
 <style>
+/* Your exact existing styles - unchanged */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { 
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
@@ -15,6 +16,7 @@ body {
   min-height: 100vh;
   padding-bottom: 20px;
 }
+/* ... all your existing CSS remains exactly the same ... */
 .messages-header {
   position: fixed;
   top: 0;
@@ -171,61 +173,78 @@ body {
 <script>
 const API = "https://mpesab.vercel.app";
 let deferredPrompt;
+let retryCount = 0;
+const MAX_RETRIES = 3;
 
-// PWA Install Prompt (only when online)
+// Weak network timeout controller
+class WeakNetworkFetcher {
+  constructor(url, options = {}) {
+    this.url = url;
+    this.options = {
+      timeout: 10000, // 10s for weak networks
+      retries: 3,
+      ...options
+    };
+  }
+
+  async fetchWithRetry() {
+    for (let i = 0; i < this.options.retries; i++) {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), this.options.timeout);
+        
+        const response = await fetch(this.url, {
+          ...this.options,
+          signal: controller.signal,
+          cache: 'no-cache' // Always fresh data
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return response;
+      } catch (error) {
+        console.log(`Attempt ${i + 1} failed:`, error.message);
+        if (i === this.options.retries - 1) throw error;
+        await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1))); // Progressive delay
+      }
+    }
+  }
+}
+
+// PWA Install (only when online)
 window.addEventListener('beforeinstallprompt', (e) => {
-  // Only show if online
   if (navigator.onLine) {
     e.preventDefault();
     deferredPrompt = e;
-    console.log('Install prompt ready');
   }
 });
 
 window.addEventListener('appinstalled', () => {
   deferredPrompt = null;
-  console.log('App installed');
 });
-
-// Check online status before API calls
-function checkOnline() {
-  return navigator.onLine;
-}
 
 function extractTimeFromMessage(message) {
   const timeMatch = message.match(/at (\d{1,2}:\d{2} (?:AM|PM))/i);
-  if (timeMatch) {
-    return timeMatch[1];
-  }
+  if (timeMatch) return timeMatch[1];
   const now = new Date();
   return now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 }
 
 async function loadMessages() {
   const container = document.getElementById("messages");
-  
-  // Show loading
   container.innerHTML = `
     <div class="empty-state">
       <div class="emoji">⏳</div>
-      <h3>Loading messages...</h3>
+      <h3>Connecting...</h3>
+      <p>Works on 2G/3G</p>
     </div>
   `;
 
-  // Only proceed if online
-  if (!checkOnline()) {
-    container.innerHTML = `
-      <div class="empty-state">
-        <div class="emoji">📴</div>
-        <h3>No internet connection</h3>
-        <p>Connect to data/WiFi to load messages</p>
-      </div>
-    `;
-    return;
-  }
-
+  // Try even on weak connection
   try {
-    const res = await fetch(`${API}/transactions`);
+    const fetcher = new WeakNetworkFetcher(`${API}/transactions`);
+    const res = await fetcher.fetchWithRetry();
     const data = await res.json();
 
     if (!data || !data.length) {
@@ -244,7 +263,6 @@ async function loadMessages() {
     
     reversedData.forEach((tx, index) => {
       const messageTime = extractTimeFromMessage(tx.message);
-      
       const div = document.createElement("div");
       div.className = `message-bubble`;
       div.style.animation = `slideInUp 0.4s ease-out ${index * 0.1}s both`;
@@ -257,32 +275,31 @@ async function loadMessages() {
       container.appendChild(div);
     });
 
-    setTimeout(() => {
-      container.scrollTop = container.scrollHeight;
-    }, 300);
+    setTimeout(() => container.scrollTop = container.scrollHeight, 300);
+    retryCount = 0; // Reset on success
 
   } catch (error) {
-    console.error("Failed to load messages:", error);
+    console.error("Failed after retries:", error);
     container.innerHTML = `
       <div class="empty-state">
-        <div class="emoji">⚠️</div>
-        <h3>Failed to load messages</h3>
-        <p>Check your data connection and try again</p>
+        <div class="emoji">📶</div>
+        <h3>Weak signal detected</h3>
+        <p>Retrying automatically... (${retryCount + 1}/${MAX_RETRIES})</p>
       </div>
     `;
+    
+    // Auto-retry every 10s on weak networks
+    retryCount++;
+    if (retryCount < MAX_RETRIES) {
+      setTimeout(loadMessages, 10000);
+    }
   }
 }
 
-// Reload when back online
-window.addEventListener('online', loadMessages);
-window.addEventListener('offline', () => {
-  document.getElementById("messages").innerHTML = `
-    <div class="empty-state">
-      <div class="emoji">📴</div>
-      <h3>No internet connection</h3>
-      <p>Connect to data/WiFi to load messages</p>
-    </div>
-  `;
+// Auto-retry on network changes
+window.addEventListener('online', () => {
+  retryCount = 0;
+  loadMessages();
 });
 
 loadMessages();
