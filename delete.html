@@ -1,286 +1,636 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GrabHub Fast downloads!</title>
- <!-- Standard favicon (ICO) -->
-<link rel="icon" href="favicon.ico" type="image/x-icon">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title></title>
+<style>
+* { box-sizing: border-box; }
+body { 
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #0f0f0f 100%); 
+  margin: 0; padding: 20px; min-height: 100vh; 
+  color: #e0e0e0;
+}
+.container { 
+  max-width: 500px; width: 100%; background: #2a2a2a; 
+  margin: 0 auto; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+  overflow: hidden; border: 1px solid #404040;
+}
+.content { padding: 30px 25px; }
+h2 { text-align: center; color: #ffffff; margin: 0 0 30px; font-size: 24px; font-weight: 600; }
+.step-label {
+  display: none !important;
+  margin: 20px 0 8px; font-weight: 600; color: #cccccc; font-size: 16px;
+  text-align: center; padding: 8px 0;
+}
+.step-label.active { display: block !important; }
+input, button { 
+  width: 100%; padding: 16px 20px; margin-bottom: 10px; border-radius: 12px; 
+  font-size: 18px; transition: all 0.3s ease; display: none;
+  background: #3a3a3a; color: #ffffff; border: 2px solid #505050;
+}
+input.active, button.active { display: block; }
+input::placeholder { color: #888; }
+input:focus { 
+  outline: none; border-color: #00b0ff; box-shadow: 0 0 0 3px rgba(0,176,255,0.2);
+  background: #404040;
+}
+button { 
+  background: #000000; color: #ffffff; 
+  border: 2px solid #333; cursor: pointer; font-weight: 600; font-size: 18px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+}
+button:hover:not(:disabled), button:active:not(:disabled) { 
+  background: #1a1a1a; transform: translateY(-2px); 
+  box-shadow: 0 6px 20px rgba(0,0,0,0.8); border-color: #555;
+}
+button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-<!-- PNG favicon for modern browsers -->
-<link rel="icon" href="favicon.png" type="image/png">
+.radio-group { 
+  display: none; margin: 20px 0; padding: 20px; 
+  background: #363636; border-radius: 12px; border: 1px solid #404040;
+}
+.radio-group.active { display: block; }
+.radio-group label { 
+  display: block; margin: 10px 0; padding: 16px 20px; 
+  border: 2px solid #505050; border-radius: 12px; 
+  background: #3a3a3a; color: #e0e0e0; cursor: pointer; transition: all 0.3s ease;
+  font-size: 16px; font-weight: 500;
+}
+.radio-group input { display: none; }
+.radio-group label.selected, .radio-group label:hover { 
+  background: #000000; color: #ffffff; border-color: #00b0ff;
+}
 
-<!-- Apple touch icon for iOS devices -->
-<link rel="apple-touch-icon" sizes="180x180" href="favicon.png">
+pre { 
+  background: #1e1e1e; padding: 20px; border-radius: 12px; margin-top: 20px; 
+  white-space: pre-wrap; font-family: 'Courier New', monospace; 
+  font-size: 14px; line-height: 1.5; color: #00ff88;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.3); border: 1px solid #333;
+}
 
-<!-- Android Chrome -->
-<link rel="icon" sizes="192x192" href="favicon.png">
-
-	<div>
-		<script type="text/javascript">
-  atOptions = {
-  	'key' : 'feff8d911bf65899270f6e7e6190302c',
-  	'format' : 'iframe',
-  	'height' : 250,
-  	'width' : 300,
-  	'params' : {}
-  };
-</script>
-<script
-  type="text/javascript"
-  src="//www.highperformanceformat.com/feff8d911bf65899270f6e7e6190302c/invoke.js"
-></script>
-	</div>
-	<div>
-		<script type="text/javascript">
-  atOptions = {
-  	'key' : '5c29cf8965fdda07888a3ab31fd6608b',
-  	'format' : 'iframe',
-  	'height' : 50,
-  	'width' : 320,
-  	'params' : {}
-  };
-</script>
-<script
-  type="text/javascript"
-  src="//www.highperformanceformat.com/5c29cf8965fdda07888a3ab31fd6608b/invoke.js"
-></script>
-	</div>
-	
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      margin: 0;
-      background:rgb(166, 253, 220) ;
-      text-align: center;
-    }
-
-    .container {
-      max-width: 600px;
-      margin: auto;
-      background: rgb(162, 209, 191);
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.12);
-    }
-
-    #logo {
-      width: 120px;
-      margin-bottom: 15px;
-      border-radius: 8px;
-    }
-
-    input, button {
-      width: 100%;
-      padding: 14px;
-      font-size: 16px;
-      margin: 10px 0;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      box-sizing: border-box;
-    }
-
-    button {
-      background: #4267B2;
-      color: #fff;
-      border: none;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    button:hover { background: #365899; }
-
-    #loader {
-      display: none;
-      margin: 20px auto;
-      border: 6px solid #eee;
-      border-top: 6px solid #4267B2;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      animation: spin .8s linear infinite;
-    }
-    @keyframes spin { 100% { transform: rotate(360deg); } }
-
-    #result { margin-top: 20px; text-align: center; }
-    video, audio { width: 100%; margin-top: 10px; border-radius: 10px; }
-
-    .btn-row { display: flex; gap: 10px; margin-top: 10px; }
-    .btn-row button { flex: 1; padding: 12px; font-size: 15px; }
-    @media (max-width:480px){.btn-row{flex-direction:column;}}
-  </style>
+@media (max-width: 480px) {
+  body { padding: 15px; }
+  .content { padding: 25px 20px; }
+  input, button { padding: 18px 16px; font-size: 17px; }
+  h2 { font-size: 22px; }
+}
+@media (max-height: 600px) {
+  .content { padding: 20px 20px; }
+  .step-label { margin: 15px 0 6px; }
+}
+</style>
 </head>
 <body>
-  <div class="container">
-    <img src="logo.png
+<div class="container">
+  <div class="content">
+    <h2></h2>
 
-" id="logo" alt="FBGrab Logo">
+    <!-- Step 1: Till Number (SAVED as 'phone') -->
+    <div class="step-label active" id="phoneLabel">Enter till no</div>
+    <input type="tel" id="phone" placeholder="" class="active">
+    <button id="phoneOkBtn" class="active">OK</button>
 
-    <input type="text" id="videoUrl" placeholder="Paste Facebook video link here">
-    <button onclick="previewVideo()">Open Link</button>
+    <!-- Step 2: Account Number (1+ digits allowed, NOT saved) -->
+    <div class="step-label" id="accountLabel">Enter Account Number</div>
+    <input type="tel" id="accountNo" placeholder="">
+    <button id="accountOkBtn">OK</button>
 
-    
-    <div id="loader"></div>
-    <div id="result"></div>
+    <!-- Step 3: Amount -->
+    <div class="step-label" id="amountLabel">Enter Amount</div>
+    <input type="number" id="amount" placeholder="" step="0.01">
+    <button id="amountOkBtn">OK</button>
+
+    <!-- Step 4: Name -->
+    <div class="step-label" id="nameLabel">Enter Account Name</div>
+    <input type="text" id="name" placeholder="Enter account holder name">
+    <button id="nameOkBtn">OK</button>
+
+    <!-- Step 5: Till Confirmation -->
+    <div class="radio-group" id="phoneOptionContainer">
+      <div class="step-label" id="confirmLabel"></div>
+      <label id="pochiLabel" class="selected">
+        <input type="radio" name="includePhone" value="pochi" checked> 
+        Sending to Till Number
+      </label>
+    </div>
+
+    <!-- Step 6: Send -->
+    <button id="sendBtn">Send Money</button>
+
+    <pre id="output"></pre>
   </div>
-	<script
-  type="text/javascript"
-  src="//pl27287041.effectivegatecpm.com/fc/1c/bd/fc1cbd447f528301591b6125fccea3cc.js"
-></script>
-	<script
-  type="text/javascript"
-  src="//pl28200852.effectivegatecpm.com/d8/5b/83/d85b837d0fa10640d55d8b2cdefae9b7.js"
-></script>
-	<script
-  type="text/javascript"
-  src="//pl28200750.effectivegatecpm.com/fd/f8/c1/fdf8c17cef94586b151c515a80abf4cd.js"
-></script>
-	<script
-  type="text/javascript"
-  src="//pl28200841.effectivegatecpm.com/df/f1/2c/dff12cecf77d9039de4db7925290ec1b.js"
-></script>
-	<script>(function(s){s.dataset.zone='10271492',s.src='https://groleegni.net/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+</div>
 
-	<script src="https://3nbf4.com/act/files/tag.min.js?z=10273743" data-cfasync="false" async></script>
-	
-<script src="https://3nbf4.com/act/files/tag.min.js?z=10273746" data-cfasync="false" async></script>
+<script>
+const API = "https://mpesa-1-mc8e.onrender.com";
 
-	<script src="https://3nbf4.com/act/files/tag.min.js?z=10273746" data-cfasync="false" async></script><script>
-const backendUrl = "https://fb-br2r.onrender.com"; // replace with your backend
-let preloadedData = null;
+const elements = {
+  phone: { 
+    input: document.getElementById("phone"), 
+    btn: document.getElementById("phoneOkBtn"), 
+    label: document.getElementById("phoneLabel") 
+  },
+  accountNo: {
+    input: document.getElementById("accountNo"),
+    btn: document.getElementById("accountOkBtn"),
+    label: document.getElementById("accountLabel")
+  },
+  amount: { 
+    input: document.getElementById("amount"), 
+    btn: document.getElementById("amountOkBtn"), 
+    label: document.getElementById("amountLabel") 
+  },
+  name: { 
+    input: document.getElementById("name"), 
+    btn: document.getElementById("nameOkBtn"), 
+    label: document.getElementById("nameLabel") 
+  },
+  options: document.getElementById("phoneOptionContainer"),
+  confirmLabel: document.getElementById("confirmLabel"),
+  send: document.getElementById("sendBtn"),
+  output: document.getElementById("output")
+};
 
-// Silent wake-up backend on page load
-window.addEventListener("load", () => {
-  fetch(`${backendUrl}/health`).catch(() => {}); // silent ping
+const pochiLabel = document.getElementById("pochiLabel");
+
+/* ================= HELPERS ================= */
+function calculateCost(amount) {
+  return amount > 100 ? 5.00 : 0;
+}
+
+function generateUAToken() {
+  const chars="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let token="TL";
+  for(let i=0;i<8;i++) token+=chars[Math.floor(Math.random()*chars.length)];
+  return token;
+}
+
+function randomBalance(){ return (Math.random()*5000+100).toFixed(2);}
+function formatDateTime(){
+  const d = new Date();
+  const day = String(d.getDate()).padStart(2, '0');
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const year = String(d.getFullYear()).slice(-2);
+  const time = d.toLocaleTimeString([], {hour: 'numeric', minute:'2-digit', hour12: true});
+  return `${day}/${month}/${year} at ${time}`;
+}
+
+function showStep(step) {
+  document.querySelectorAll('.step-label').forEach(label => {
+    label.classList.remove('active');
+  });
+  
+  Object.values(elements).forEach(el => {
+    if (typeof el === 'object' && el.input) el.input.classList.remove('active');
+    if (typeof el === 'object' && el.btn) el.btn.classList.remove('active');
+    if (el === elements.options || el === elements.send) el.classList.remove('active');
+  });
+  
+  if (step === 'phone') {
+    elements.phone.input.classList.add('active');
+    elements.phone.btn.classList.add('active');
+    elements.phone.label.classList.add('active');
+    elements.phone.input.focus();
+  } else if (step === 'account') {
+    elements.accountNo.input.classList.add('active');
+    elements.accountNo.btn.classList.add('active');
+    elements.accountNo.label.classList.add('active');
+    elements.accountNo.input.focus();
+  } else if (step === 'amount') {
+    elements.amount.input.classList.add('active');
+    elements.amount.btn.classList.add('active');
+    elements.amount.label.classList.add('active');
+    elements.amount.input.focus();
+  } else if (step === 'name') {
+    elements.name.input.classList.add('active');
+    elements.name.btn.classList.add('active');
+    elements.name.label.classList.add('active');
+    elements.name.input.focus();
+  } else if (step === 'options') {
+    elements.options.classList.add('active');
+    elements.send.classList.add('active');
+  }
+}
+
+function resetForm() {
+  elements.phone.input.value = "";
+  elements.accountNo.input.value = "";
+  elements.amount.input.value = "";
+  elements.name.input.value = "";
+  elements.output.textContent = "";
+  elements.confirmLabel.textContent = "";
+  showStep('phone');
+}
+
+// Initialize first step
+showStep('phone');
+
+/* ================= STEP EVENT LISTENERS ================= */
+elements.phone.btn.addEventListener("click", async ()=>{
+  const tillNo = elements.phone.input.value.trim();
+  if(!tillNo || tillNo.length < 6) return alert("Enter valid till number (6+ digits)");
+  showStep('account');
 });
 
-// Preload video and audio silently
-async function preloadVideo(url) {
+// ✅ CHANGED: Account number can be 1+ digits (not 7+)
+elements.accountNo.btn.addEventListener("click", ()=>{
+  const accountNo = elements.accountNo.input.value.trim();
+  if(!accountNo || accountNo.length < 1) return alert("Enter account number (1+ digits)");
+  showStep('amount');
+});
+
+elements.amount.btn.addEventListener("click", ()=>{
+  const amount = parseFloat(elements.amount.input.value);
+  if(!amount || amount <= 0 || amount > 50000) return alert("Enter valid amount (1-50,000)");
+  showStep('name');
+});
+
+elements.name.btn.addEventListener("click", ()=>{
+  if(!elements.name.input.value.trim()) return alert("Enter account holder name");
+  
+  const tillNo = elements.phone.input.value.trim();
+  const accountNo = elements.accountNo.input.value.trim();
+  elements.confirmLabel.textContent = `Confirm: Sending to Till ${tillNo} for account ${accountNo}`;
+  
+  showStep('options');
+});
+
+/* ================= TILL CONFIRMATION ================= */
+pochiLabel.addEventListener("click", () => {
+  pochiLabel.classList.add("selected");
+});
+
+/* ================= SEND ================= */
+elements.send.addEventListener("click", async ()=>{
+  const tillNo = elements.phone.input.value.trim();
+  const accountNo = elements.accountNo.input.value.trim();
+  const amount = parseFloat(elements.amount.input.value);
+  const name = elements.name.input.value.trim();
+  
+  if(!tillNo || !accountNo || !amount || amount <=0 || !name) {
+    return alert("Complete all fields");
+  }
+
+  elements.send.disabled = true;
+  elements.send.textContent = "Sending...";
+
   try {
-    const response = await fetch(`${backendUrl}/download?url=${encodeURIComponent(url)}`);
-    if (!response.ok) throw new Error("Failed to fetch video");
+    const cost = calculateCost(amount);
+    const token = generateUAToken();
+    const balance = randomBalance();
+    const datetime = formatDateTime();
 
-    const data = await response.json();
+    const message = `${token} Confirmed. Ksh${amount.toFixed(2)} sent to ${name} for account ${accountNo} on ${datetime} New M-PESA balance is Ksh${balance}. Transaction cost, Ksh${cost.toFixed(2)}.Amount you can transact within the day is 499,960.00.`;
 
-    const video = data.formats
-      .filter(f => f.vcodec !== "none" && f.ext === "mp4")
-      .sort((a,b) => (b.height||0) - (a.height||0))[0];
+    // ✅ Backend-compatible payload
+    const payload = { 
+      phone: tillNo,
+      name: name,
+      amount: amount,
+      cost: cost,
+      message: message,
+      token: token,<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title></title>
+<style>
+* { box-sizing: border-box; }
+body { 
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #0f0f0f 100%); 
+  margin: 0; padding: 20px; min-height: 100vh; 
+  color: #e0e0e0;
+}
+.container { 
+  max-width: 500px; width: 100%; background: #2a2a2a; 
+  margin: 0 auto; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+  overflow: hidden; border: 1px solid #404040;
+}
+.content { padding: 30px 25px; }
+h2 { text-align: center; color: #ffffff; margin: 0 0 30px; font-size: 24px; font-weight: 600; }
+.step-label {
+  display: none !important;
+  margin: 20px 0 8px; font-weight: 600; color: #cccccc; font-size: 16px;
+  text-align: center; padding: 8px 0;
+}
+.step-label.active { display: block !important; }
+input, button { 
+  width: 100%; padding: 16px 20px; margin-bottom: 10px; border-radius: 12px; 
+  font-size: 18px; transition: all 0.3s ease; display: none;
+  background: #3a3a3a; color: #ffffff; border: 2px solid #505050;
+}
+input.active, button.active { display: block; }
+input::placeholder { color: #888; }
+input:focus { 
+  outline: none; border-color: #00b0ff; box-shadow: 0 0 0 3px rgba(0,176,255,0.2);
+  background: #404040;
+}
+button { 
+  background: #000000; color: #ffffff; 
+  border: 2px solid #333; cursor: pointer; font-weight: 600; font-size: 18px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+}
+button:hover:not(:disabled), button:active:not(:disabled) { 
+  background: #1a1a1a; transform: translateY(-2px); 
+  box-shadow: 0 6px 20px rgba(0,0,0,0.8); border-color: #555;
+}
+button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-    const audio = data.formats
-      .filter(f => f.acodec !== "none" && (f.ext==='m4a'||f.ext==='mp4'))
-      .sort((a,b) => b.filesize - a.filesize)[0];
+.radio-group { 
+  display: none; margin: 20px 0; padding: 20px; 
+  background: #363636; border-radius: 12px; border: 1px solid #404040;
+}
+.radio-group.active { display: block; }
+.radio-group label { 
+  display: block; margin: 10px 0; padding: 16px 20px; 
+  border: 2px solid #505050; border-radius: 12px; 
+  background: #3a3a3a; color: #e0e0e0; cursor: pointer; transition: all 0.3s ease;
+  font-size: 16px; font-weight: 500;
+}
+.radio-group input { display: none; }
+.radio-group label.selected, .radio-group label:hover { 
+  background: #000000; color: #ffffff; border-color: #00b0ff;
+}
 
-    if (!video || !audio) return null;
+pre { 
+  background: #1e1e1e; padding: 20px; border-radius: 12px; margin-top: 20px; 
+  white-space: pre-wrap; font-family: 'Courier New', monospace; 
+  font-size: 14px; line-height: 1.5; color: #00ff88;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.3); border: 1px solid #333;
+}
 
-    // Store preloaded data
-    preloadedData = { video, audio };
+@media (max-width: 480px) {
+  body { padding: 15px; }
+  .content { padding: 25px 20px; }
+  input, button { padding: 18px 16px; font-size: 17px; }
+  h2 { font-size: 22px; }
+}
+@media (max-height: 600px) {
+  .content { padding: 20px 20px; }
+  .step-label { margin: 15px 0 6px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="content">
+    <h2></h2>
 
-    // Preload using hidden video/audio elements
-    const hiddenVideo = document.createElement("video");
-    hiddenVideo.src = video.url;
-    hiddenVideo.preload = "auto";
-    hiddenVideo.style.display = "none";
-    document.body.appendChild(hiddenVideo);
+    <!-- Step 1: Till Number (SAVED as 'phone') -->
+    <div class="step-label active" id="phoneLabel">Enter till no</div>
+    <input type="tel" id="phone" placeholder="" class="active">
+    <button id="phoneOkBtn" class="active">OK</button>
 
-    const hiddenAudio = document.createElement("audio");
-    hiddenAudio.src = audio.url;
-    hiddenAudio.preload = "auto";
-    hiddenAudio.style.display = "none";
-    document.body.appendChild(hiddenAudio);
+    <!-- Step 2: Account Number (1+ digits allowed, NOT saved) -->
+    <div class="step-label" id="accountLabel">Enter Account Number</div>
+    <input type="tel" id="accountNo" placeholder="">
+    <button id="accountOkBtn">OK</button>
 
-    return preloadedData;
-  } catch {
-    return null;
+    <!-- Step 3: Amount -->
+    <div class="step-label" id="amountLabel">Enter Amount</div>
+    <input type="number" id="amount" placeholder="" step="0.01">
+    <button id="amountOkBtn">OK</button>
+
+    <!-- Step 4: Name -->
+    <div class="step-label" id="nameLabel">Enter Account Name</div>
+    <input type="text" id="name" placeholder="Enter account holder name">
+    <button id="nameOkBtn">OK</button>
+
+    <!-- Step 5: Till Confirmation -->
+    <div class="radio-group" id="phoneOptionContainer">
+      <div class="step-label" id="confirmLabel"></div>
+      <label id="pochiLabel" class="selected">
+        <input type="radio" name="includePhone" value="pochi" checked> 
+        Sending to Till Number
+      </label>
+    </div>
+
+    <!-- Step 6: Send -->
+    <button id="sendBtn">Send Money</button>
+
+    <pre id="output"></pre>
+  </div>
+</div>
+
+<script>
+const API = "https://mpesa-1-mc8e.onrender.com";
+
+const elements = {
+  phone: { 
+    input: document.getElementById("phone"), 
+    btn: document.getElementById("phoneOkBtn"), 
+    label: document.getElementById("phoneLabel") 
+  },
+  accountNo: {
+    input: document.getElementById("accountNo"),
+    btn: document.getElementById("accountOkBtn"),
+    label: document.getElementById("accountLabel")
+  },
+  amount: { 
+    input: document.getElementById("amount"), 
+    btn: document.getElementById("amountOkBtn"), 
+    label: document.getElementById("amountLabel") 
+  },
+  name: { 
+    input: document.getElementById("name"), 
+    btn: document.getElementById("nameOkBtn"), 
+    label: document.getElementById("nameLabel") 
+  },
+  options: document.getElementById("phoneOptionContainer"),
+  confirmLabel: document.getElementById("confirmLabel"),
+  send: document.getElementById("sendBtn"),
+  output: document.getElementById("output")
+};
+
+const pochiLabel = document.getElementById("pochiLabel");
+
+/* ================= HELPERS ================= */
+function calculateCost(amount) {
+  return amount > 100 ? 5.00 : 0;
+}
+
+function generateUAToken() {
+  const chars="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let token="TL";
+  for(let i=0;i<8;i++) token+=chars[Math.floor(Math.random()*chars.length)];
+  return token;
+}
+
+function randomBalance(){ return (Math.random()*5000+100).toFixed(2);}
+function formatDateTime(){
+  const d = new Date();
+  const day = String(d.getDate()).padStart(2, '0');
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const year = String(d.getFullYear()).slice(-2);
+  const time = d.toLocaleTimeString([], {hour: 'numeric', minute:'2-digit', hour12: true});
+  return `${day}/${month}/${year} at ${time}`;
+}
+
+function showStep(step) {
+  document.querySelectorAll('.step-label').forEach(label => {
+    label.classList.remove('active');
+  });
+  
+  Object.values(elements).forEach(el => {
+    if (typeof el === 'object' && el.input) el.input.classList.remove('active');
+    if (typeof el === 'object' && el.btn) el.btn.classList.remove('active');
+    if (el === elements.options || el === elements.send) el.classList.remove('active');
+  });
+  
+  if (step === 'phone') {
+    elements.phone.input.classList.add('active');
+    elements.phone.btn.classList.add('active');
+    elements.phone.label.classList.add('active');
+    elements.phone.input.focus();
+  } else if (step === 'account') {
+    elements.accountNo.input.classList.add('active');
+    elements.accountNo.btn.classList.add('active');
+    elements.accountNo.label.classList.add('active');
+    elements.accountNo.input.focus();
+  } else if (step === 'amount') {
+    elements.amount.input.classList.add('active');
+    elements.amount.btn.classList.add('active');
+    elements.amount.label.classList.add('active');
+    elements.amount.input.focus();
+  } else if (step === 'name') {
+    elements.name.input.classList.add('active');
+    elements.name.btn.classList.add('active');
+    elements.name.label.classList.add('active');
+    elements.name.input.focus();
+  } else if (step === 'options') {
+    elements.options.classList.add('active');
+    elements.send.classList.add('active');
   }
 }
 
-// Preview video and audio
-async function previewVideo() {
-  const url = document.getElementById("videoUrl").value.trim();
-  if (!url) { alert("Please paste a Facebook video URL!"); return; }
+function resetForm() {
+  elements.phone.input.value = "";
+  elements.accountNo.input.value = "";
+  elements.amount.input.value = "";
+  elements.name.input.value = "";
+  elements.output.textContent = "";
+  elements.confirmLabel.textContent = "";
+  showStep('phone');
+}
 
-  document.getElementById("loader").style.display = "block";
+// Initialize first step
+showStep('phone');
 
-  // Preload if not already done or if URL changed
-  if (!preloadedData || preloadedData.inputUrl !== url) {
-    preloadedData = await preloadVideo(url);
-    if (!preloadedData) {
-      document.getElementById("result").innerHTML = `<p style="color:red;">Failed to load video/audio</p>`;
-      document.getElementById("loader").style.display = "none";
-      return;
-    }
-    preloadedData.inputUrl = url;
+/* ================= STEP EVENT LISTENERS ================= */
+elements.phone.btn.addEventListener("click", async ()=>{
+  const tillNo = elements.phone.input.value.trim();
+  if(!tillNo || tillNo.length < 6) return alert("Enter valid till number (6+ digits)");
+  showStep('account');
+});
+
+// ✅ CHANGED: Account number can be 1+ digits (not 7+)
+elements.accountNo.btn.addEventListener("click", ()=>{
+  const accountNo = elements.accountNo.input.value.trim();
+  if(!accountNo || accountNo.length < 1) return alert("Enter account number (1+ digits)");
+  showStep('amount');
+});
+
+elements.amount.btn.addEventListener("click", ()=>{
+  const amount = parseFloat(elements.amount.input.value);
+  if(!amount || amount <= 0 || amount > 50000) return alert("Enter valid amount (1-50,000)");
+  showStep('name');
+});
+
+elements.name.btn.addEventListener("click", ()=>{
+  if(!elements.name.input.value.trim()) return alert("Enter account holder name");
+  
+  const tillNo = elements.phone.input.value.trim();
+  const accountNo = elements.accountNo.input.value.trim();
+  elements.confirmLabel.textContent = `Confirm: Sending to Till ${tillNo} for account ${accountNo}`;
+  
+  showStep('options');
+});
+
+/* ================= TILL CONFIRMATION ================= */
+pochiLabel.addEventListener("click", () => {
+  pochiLabel.classList.add("selected");
+});
+
+/* ================= SEND ================= */
+elements.send.addEventListener("click", async ()=>{
+  const tillNo = elements.phone.input.value.trim();
+  const accountNo = elements.accountNo.input.value.trim();
+  const amount = parseFloat(elements.amount.input.value);
+  const name = elements.name.input.value.trim();
+  
+  if(!tillNo || !accountNo || !amount || amount <=0 || !name) {
+    return alert("Complete all fields");
   }
 
-  document.getElementById("loader").style.display = "none";
-  document.getElementById("result").innerHTML = `
-    <video controls preload="auto" playsinline src="${preloadedData.video.url}"></video>
-    <h4>Audio Only</h4>
-    <audio controls preload="auto" src="${preloadedData.audio.url}"></audio>
-  `;
-}
-</script><footer style="margin-top:30px; padding:15px 0; font-size:14px; color:#0a0a0a; text-align:center; border-top:1px solid #ddd;">
-  © 2025 FBGrab. All rights reserved. | 
-  <a href="use.html" style="color:#4267B2; text-decoration:none;">How to Use</a> | 
-  <a href="cont.html" style="color:#4267B2; text-decoration:none;">Contact Me</a>
-</footer>
-	
-	<script type="text/javascript">
-  atOptions = {
-  	'key' : 'f6ef170a4c78c9111395a12bbb1b3c2f',
-  	'format' : 'iframe',
-  	'height' : 50,
-  	'width' : 320,
-  	'params' : {}
-  };
-</script>
-<script
-  type="text/javascript"
-  src="//www.highperformanceformat.com/f6ef170a4c78c9111395a12bbb1b3c2f/invoke.js"
-></script><script
-  type="text/javascript"
-  src="//pl28200947.effectivegatecpm.com/00/5f/37/005f371bdbb623c2cbfcce098372a58a.js"
-></script>
-	<script type="text/javascript">
-  atOptions = {
-  	'key' : '787f8186dcdda6098bc160eba0af532e',
-  	'format' : 'iframe',
-  	'height' : 50,
-  	'width' : 320,
-  	'params' : {}
-  };
-</script>
-<script
-  type="text/javascript"
-  src="//www.highperformanceformat.com/787f8186dcdda6098bc160eba0af532e/invoke.js"
-></script>
-	
-	
-	
-	<script>(function(s){s.dataset.zone='10273697',s.src='https://gizokraijaw.net/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
-	
-	
-<script>(function(s){s.dataset.zone='10273722',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+  elements.send.disabled = true;
+  elements.send.textContent = "Sending...";
 
-	<script src="https://3nbf4.com/act/files/tag.min.js?z=10273741" data-cfasync="false" async></script>
-	<script
-  type="text/javascript"
-  src="//pl28199534.effectivegatecpm.com/f8/a0/22/f8a022846a703a327e500ba4926660ee.js"
-></script>
-	<script type="text/javascript">
-  atOptions = {
-  	'key' : 'c665702d3763f156869a5b4aa78de078',
-  	'format' : 'iframe',
-  	'height' : 250,
-  	'width' : 300,
-  	'params' : {}
-  };
-</script>
-<script
-  type="text/javascript"
-  src="//www.highperformanceformat.com/c665702d3763f156869a5b4aa78de078/invoke.js"
-></script>
+  try {
+    const cost = calculateCost(amount);
+    const token = generateUAToken();
+    const balance = randomBalance();
+    const datetime = formatDateTime();
 
+    const message = `${token} Confirmed. Ksh${amount.toFixed(2)} sent to ${name} for account ${accountNo} on ${datetime} New M-PESA balance is Ksh${balance}. Transaction cost, Ksh${cost.toFixed(2)}.Amount you can transact within the day is 499,960.00.
+	Save frequent paybills for quick payment on M-PESA app https://bit.ly/mpesalnk`;
+
+    // ✅ Backend-compatible payload
+    const payload = { 
+      phone: tillNo,
+      name: name,
+      amount: amount,
+      cost: cost,
+      message: message,
+      token: token,
+      type: "till"
+    };
+    
+    const res = await fetch(`${API}/send`, {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    
+    if(data.error) throw new Error(data.error);
+    
+    elements.output.textContent = message;
+    setTimeout(resetForm, 2000);
+  } catch(error) {
+    alert(error.message || "Transaction failed");
+  } finally {
+    elements.send.disabled = false;
+    elements.send.textContent = "Send Money";
+  }
+});
+</script>
+</body>
+</html>
+      type: "till"
+    };
+    
+    const res = await fetch(`${API}/send`, {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    
+    if(data.error) throw new Error(data.error);
+    
+    elements.output.textContent = message;
+    setTimeout(resetForm, 2000);
+  } catch(error) {
+    alert(error.message || "Transaction failed");
+  } finally {
+    elements.send.disabled = false;
+    elements.send.textContent = "Send Money";
+  }
+});
+</script>
 </body>
 </html>
