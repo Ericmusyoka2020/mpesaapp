@@ -1,12 +1,11 @@
 
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Messages</title>
+<link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIk1lc3NhZ2VzIiwKICAic2hvcnRfbmFtZSI6ICJNZXNzYWdlcyIsCiAgImRlc2NyaXB0aW9uIjogIk0tUGVzYSB0cmFuc2FjdGlvbiBtZXNzYWdlcyIsCiAgInN0YXJ0X3VybCI6ICIuL2luZGV4Lmh0bWwiLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiMwMDAiLAogICJ0aGVtZV9jb2xvciI6ICIjYWY1NjU2IiwKICAiaWNvbnMiOiBbCiAgICB7CiAgICAgICJzcmMiOiAibG9nby5wbmciLAogICAgICAic2l6ZXMiOiAiMTkyeDE5MiIsCiAgICAgICJ0eXBlIjogImltYWdlL3BuZwoiICAgIH0sCiAgICB7CiAgICAgICJzcmMiOiAibG9nby5wbmciLAogICAgICAic2l6ZXMiOiAiNTEyeDUxMiIsCiAgICAgICJ0eXBlIjogImltYWdlL3BuZwoiICAgIH0KICBdCn0=">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { 
@@ -55,7 +54,6 @@ body {
   margin: 0 auto;
   background: #1a1919;
 }
-/* Rest of your existing styles remain unchanged */
 .messages-container {
   background: #000;
   height: calc(100vh - 110px);
@@ -155,9 +153,9 @@ body {
 </head>
 <body>
 <div class="messages-header">
-  <div class="back-arrow"></div>
+  <div class="back-arrow">←</div>
   <img src="logo.png" alt="Logo" class="logo">
-  <h1 class="header-title"></h1>
+  <h1 class="header-title">Messages</h1>
 </div>
 
 <div class="page-content">
@@ -172,6 +170,27 @@ body {
 
 <script>
 const API = "https://mpesab.vercel.app";
+let deferredPrompt;
+
+// PWA Install Prompt (only when online)
+window.addEventListener('beforeinstallprompt', (e) => {
+  // Only show if online
+  if (navigator.onLine) {
+    e.preventDefault();
+    deferredPrompt = e;
+    console.log('Install prompt ready');
+  }
+});
+
+window.addEventListener('appinstalled', () => {
+  deferredPrompt = null;
+  console.log('App installed');
+});
+
+// Check online status before API calls
+function checkOnline() {
+  return navigator.onLine;
+}
 
 function extractTimeFromMessage(message) {
   const timeMatch = message.match(/at (\d{1,2}:\d{2} (?:AM|PM))/i);
@@ -183,12 +202,32 @@ function extractTimeFromMessage(message) {
 }
 
 async function loadMessages() {
+  const container = document.getElementById("messages");
+  
+  // Show loading
+  container.innerHTML = `
+    <div class="empty-state">
+      <div class="emoji">⏳</div>
+      <h3>Loading messages...</h3>
+    </div>
+  `;
+
+  // Only proceed if online
+  if (!checkOnline()) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="emoji">📴</div>
+        <h3>No internet connection</h3>
+        <p>Connect to data/WiFi to load messages</p>
+      </div>
+    `;
+    return;
+  }
+
   try {
     const res = await fetch(`${API}/transactions`);
     const data = await res.json();
 
-    const container = document.getElementById("messages");
-    
     if (!data || !data.length) {
       container.innerHTML = `
         <div class="empty-state">
@@ -224,10 +263,27 @@ async function loadMessages() {
 
   } catch (error) {
     console.error("Failed to load messages:", error);
-    document.getElementById("messages").innerHTML = 
-      "<div style='text-align:center; padding:80px 20px; color:#888;'>Failed to load messages.<br>Check your connection.</div>";
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="emoji">⚠️</div>
+        <h3>Failed to load messages</h3>
+        <p>Check your data connection and try again</p>
+      </div>
+    `;
   }
 }
+
+// Reload when back online
+window.addEventListener('online', loadMessages);
+window.addEventListener('offline', () => {
+  document.getElementById("messages").innerHTML = `
+    <div class="empty-state">
+      <div class="emoji">📴</div>
+      <h3>No internet connection</h3>
+      <p>Connect to data/WiFi to load messages</p>
+    </div>
+  `;
+});
 
 loadMessages();
 </script>
