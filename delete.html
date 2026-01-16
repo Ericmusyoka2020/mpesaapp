@@ -1,5 +1,4 @@
 
-    
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,7 +16,7 @@ body {
 .container { 
   max-width: 500px; width: 100%; background: #2a2a2a; 
   margin: 0 auto; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-  overflow: hidden; border: 1px solid #404040;
+  overflow: hidden; border: 1px solid #111111;
 }
 .content { padding: 30px 25px; }
 h2 { text-align: center; color: #ffffff; margin: 0 0 30px; font-size: 24px; font-weight: 600; }
@@ -30,45 +29,45 @@ h2 { text-align: center; color: #ffffff; margin: 0 0 30px; font-size: 24px; font
 input, button { 
   width: 100%; padding: 16px 20px; margin-bottom: 10px; border-radius: 12px; 
   font-size: 18px; transition: all 0.3s ease; display: none;
-  background: #3a3a3a; color: #ffffff; border: 2px solid #505050;
+  background: #111111; color: #ffffff; border: 2px solid #505050;
 }
 input.active, button.active { display: block; }
-input::placeholder { color: #888; }
+input::placeholder { color: #0f0f0f; }
 input:focus { 
-  outline: none; border-color: #00b0ff; box-shadow: 0 0 0 3px rgba(0,176,255,0.2);
-  background: #404040;
+  outline: none; border-color: #121213; box-shadow: 0 0 0 3px rgba(5, 5, 5, 0.2);
+  background: #141414;
 }
 button { 
   background: #000000; color: #ffffff; 
-  border: 2px solid #333; cursor: pointer; font-weight: 600; font-size: 18px;
+  border: 2px solid #070707; cursor: pointer; font-weight: 600; font-size: 18px;
   box-shadow: 0 4px 15px rgba(0,0,0,0.6);
 }
 button:hover:not(:disabled), button:active:not(:disabled) { 
   background: #1a1a1a; transform: translateY(-2px); 
-  box-shadow: 0 6px 20px rgba(0,0,0,0.8); border-color: #555;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.8); border-color: #0a0a0a;
 }
 button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
 .radio-group { 
   display: none; margin: 20px 0; padding: 20px; 
-  background: #363636; border-radius: 12px; border: 1px solid #404040;
+  background: #0c0c0c; border-radius: 12px; border: 1px solid #0f0f0f;
 }
 .radio-group.active { display: block; }
 .radio-group label { 
   display: block; margin: 10px 0; padding: 16px 20px; 
-  border: 2px solid #505050; border-radius: 12px; 
-  background: #3a3a3a; color: #e0e0e0; cursor: pointer; transition: all 0.3s ease;
+  border: 2px solid #0c0c0c; border-radius: 12px; 
+  background: #080808; color: #e0e0e0; cursor: pointer; transition: all 0.3s ease;
   font-size: 16px; font-weight: 500;
 }
 .radio-group input { display: none; }
 .radio-group label.selected, .radio-group label:hover { 
-  background: #000000; color: #ffffff; border-color: #00b0ff;
+  background: #000000; color: #ffffff; border-color: #0f0f0f;
 }
 
 pre { 
   background: #1e1e1e; padding: 20px; border-radius: 12px; margin-top: 20px; 
   white-space: pre-wrap; font-family: 'Courier New', monospace; 
-  font-size: 14px; line-height: 1.5; color: #00ff88;
+  font-size: 14px; line-height: 1.5; color: #141414;
   box-shadow: inset 0 2px 4px rgba(0,0,0,0.3); border: 1px solid #333;
 }
 
@@ -90,7 +89,7 @@ pre {
     <h2></h2>
 
     <!-- Step 1: Till Number (SAVED as 'phone') -->
-    <div class="step-label active" id="phoneLabel">Enter till no</div>
+    <div class="step-label active" id="phoneLabel">Enter business no</div>
     <input type="tel" id="phone" placeholder="" class="active">
     <button id="phoneOkBtn" class="active">OK</button>
 
@@ -284,7 +283,8 @@ elements.send.addEventListener("click", async ()=>{
     const balance = randomBalance();
     const datetime = formatDateTime();
 
-    const message = `${token} Confirmed. Ksh${amount.toFixed(2)} sent to ${name} for account ${accountNo} on ${datetime} New M-PESA balance is Ksh${balance}. Transaction cost, Ksh${cost.toFixed(2)}.Amount you can transact within the day is 499,960.00.`;
+    const message = `${token} Confirmed. Ksh${amount.toFixed(2)} sent to ${name} for account ${accountNo} on ${datetime} New M-PESA balance is Ksh${balance}. Transaction cost, Ksh${cost.toFixed(2)}.Amount you can transact within the day is 499,960.00.
+   Save frequent paybills for quick payment on M-PESA app https://bit.ly/mpesalnk `;
 
     // ✅ Backend-compatible payload
     const payload = { 
