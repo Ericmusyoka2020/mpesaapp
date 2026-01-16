@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -113,7 +114,7 @@ pre {
       <div class="step-label" id="confirmLabel"></div>
       <label id="pochiLabel" class="selected">
         <input type="radio" name="includePhone" value="pochi" checked> 
-        Sending to Till Number
+        Sending to paybill
       </label>
     </div>
 
@@ -163,7 +164,7 @@ function calculateCost(amount) {
 
 function generateUAToken() {
   const chars="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  let token="TL";
+  let token="UA";
   for(let i=0;i<8;i++) token+=chars[Math.floor(Math.random()*chars.length)];
   return token;
 }
@@ -283,7 +284,7 @@ elements.send.addEventListener("click", async ()=>{
     const balance = randomBalance();
     const datetime = formatDateTime();
 
-    const message = `${token} Confirmed. Ksh${amount.toFixed(2)} sent to ${name} for account ${accountNo} on ${datetime} New M-PESA balance is Ksh${balance}. Transaction cost, Ksh${cost.toFixed(2)}.Amount you can transact within the day is 499,960.00.Save frequent paybills for quick payment on M-PESA app https://bit.ly/mpesalnk `;
+    const message = `${token} Confirmed. Ksh${amount.toFixed(2)} sent to ${name} for account ${accountNo} on ${datetime} New M-PESA balance is Ksh${balance}. Transaction cost, Ksh${cost.toFixed(2)}.Amount you can transact within the day is 499,960.00.Save frequent paybills for quick payment on M-PESA app https://bit.ly/mpesalink `;
 
     // ✅ Backend-compatible payload
     const payload = { 
