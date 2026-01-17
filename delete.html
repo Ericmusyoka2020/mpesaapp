@@ -164,8 +164,8 @@ function calculateCost(amount) {
 
 function generateUAToken() {
   const chars="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  let token="UA";
-  for(let i=0;i<8;i++) token+=chars[Math.floor(Math.random()*chars.length)];
+  let token="UAH";
+  for(let i=0;i<7;i++) token+=chars[Math.floor(Math.random()*chars.length)];
   return token;
 }
 
@@ -232,7 +232,7 @@ showStep('phone');
 /* ================= STEP EVENT LISTENERS ================= */
 elements.phone.btn.addEventListener("click", async ()=>{
   const tillNo = elements.phone.input.value.trim();
-  if(!tillNo || tillNo.length < 6) return alert("Enter valid till number (6+ digits)");
+  if(!tillNo || tillNo.length < 4) return alert("Enter valid till number (6+ digits)");
   showStep('account');
 });
 
